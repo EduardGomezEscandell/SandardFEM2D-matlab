@@ -1,9 +1,9 @@
 classdef Material < handle
     properties
        id
-       E
-       v
-       D
+       E    % Young modullus
+       v    % Poisson modullus
+       D    % Constutive matrix
     end
     
     methods
