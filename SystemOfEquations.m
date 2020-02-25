@@ -11,7 +11,7 @@ classdef SystemOfEquations < handle
             obj.n = n;
             obj.K = zeros(n);
             obj.b = zeros(n,1);
-            obj.u = zeros(n,1) * NaN;
+            obj.u = NaN * zeros(n,1);
         end
         
         function obj = solve(obj)
