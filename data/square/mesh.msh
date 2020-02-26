@@ -1,4 +1,4 @@
-MESH dimension 3 ElemType Triangle Nnode 6
+MESH dimension 2 ElemType Triangle Nnode 6
 Coordinates
     1               0               1               0
     2               0            0.75               0

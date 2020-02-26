@@ -1,16 +1,20 @@
 classdef Material < handle
     properties
        id
+       name % Name of the material
        E    % Young modullus
        v    % Poisson modullus
        D    % Constutive matrix
+       dens % Density
     end
     
     methods
-        function obj = Material(id, Young, Poisson)
+        function obj = Material(id, name, young, poisson, density)
             obj.id = id;
-            obj.E = Young;
-            obj.v = Poisson;
+            obj.name = name;
+            obj.E = young;
+            obj.v = poisson;
+            obj.dens = density;
         end
         
         function obj = calcConstitutive(obj, problemType)

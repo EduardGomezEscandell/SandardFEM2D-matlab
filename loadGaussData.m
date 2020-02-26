@@ -31,7 +31,7 @@ function gaussData = loadGaussSegment(integrationDegree)
     end
     
     if ~found
-        fileGauss.fclose();
+        fclose(fileGauss);
         error(['Failed to retrieve Gauss points in segment of order ',num2str(integrationDegree)]);
     end
     
