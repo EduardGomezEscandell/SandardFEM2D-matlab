@@ -21,16 +21,19 @@ classdef Domain < handle
         function obj = new_node(obj, X)
             % Creates a new node and adds it to nodes
             obj.nodes{end+1} = Node(obj.n_nodes+1,X);
+            obj.n_nodes = obj.n_nodes + 1;
         end
         
         function obj = new_elem(obj, node_ids, material_id)
             % Creates a new element and adds it to elems
             obj.elems{end+1} = Element(obj, obj.n_elems+1, node_ids, material_id);
+            obj.n_elems = obj.n_elems+1;
         end
         
         function obj = new_material(obj, Young, Poisson)
            % Creates a new material and adds it to materials
            obj.materials{end+1} = material(obj.n_materials+1, Young, Poisson);
+           obj.n_materials = obj.n_materials + 1;
         end
         
         function obj = readFromFile(obj, fileName)
