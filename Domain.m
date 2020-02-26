@@ -6,13 +6,16 @@ classdef Domain < handle
        n_nodes          % size of nodes
        n_elems          % size of elems
        n_materials      % size of materials
+       n_dimensions     % number of dimensions
+       nodes_per_elem   % number of nodes per element
+       integrationDegree % Degree of integration. Might be moved elsewhere.
     end
     
     methods
         function obj = Domain()
-            obj.nodes = cell();
-            obj.elems = cell();
-            obj.materials = cell();
+            obj.nodes = cell(0);
+            obj.elems = cell(0);
+            obj.materials = cell(0);
             obj.n_nodes = 0;
             obj.n_elems = 0;
             obj.n_materials = 0;
@@ -40,7 +43,10 @@ classdef Domain < handle
             % Reads from a file named fileName to load the geomtery
             % Will use new_node, new_elem and new_material to add them
             % Must read in order: Materials, then nodes, then elements
-            % Must write
+            
+            % Placeholder for testing:
+            obj.n_dimensions = 1;
+            obj.integrationDegree = 6;
         end
     end
 end

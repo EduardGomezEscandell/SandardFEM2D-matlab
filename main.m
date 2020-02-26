@@ -4,9 +4,10 @@ outputFileName = 'results/square.res';
 
 % Loading geomery
 dom = Domain();
-dom.loadFromFile(inputFileName);
+dom.readFromFile(inputFileName);
 
 % Loading math data
+gaussData = loadGaussData(dom);
 
 % Assembling system
 
