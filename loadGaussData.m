@@ -11,7 +11,12 @@ function gaussData = loadGaussData(dom)
 end
 
 function gaussData = loadGaussSegment(integrationDegree)
-    fileGauss = fopen('math_data/gauss_points_segment.txt');
+    % Loading file
+    fileGaussName = 'math_data/gauss_points_segment.txt';
+    fileGauss = fopen(fileGaussName);
+    if fileGauss<0
+       error(['Failed to find file ', fileGaussName]);
+    end
     
     % Finding integration degree
     target = ['n = ',num2str(integrationDegree+1)];
@@ -26,6 +31,7 @@ function gaussData = loadGaussSegment(integrationDegree)
     end
     
     if ~found
+        fileGauss.fclose();
         error(['Failed to retrieve Gauss points in segment of order ',num2str(integrationDegree)]);
     end
     
@@ -40,4 +46,6 @@ function gaussData = loadGaussSegment(integrationDegree)
         gaussData{i} = Gauss_point(w, z);
     end
     
+    % Closing file
+    fclose(fileGauss);
 end
