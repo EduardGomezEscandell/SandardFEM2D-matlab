@@ -9,12 +9,21 @@ classdef Material < handle
     end
     
     methods
-        function obj = Material(id, name, young, poisson, density)
+        function obj = Material(id, attribute_list)
             obj.id = id;
-            obj.name = name;
-            obj.E = young;
-            obj.v = poisson;
-            obj.dens = density;
+            for attribute = attribute_list
+                if strcmp(attribute.Name,'name')
+                    obj.name = attribute.Value;
+                elseif strcmp(attribute.Name,'E')
+                    obj.E = str2double(attribute.Value);
+                elseif strcmp(attribute.Name,'Poisson')
+                    obj.v = str2double(attribute.Value);
+                elseif strcmp(attribute.Name,'Density')
+                    obj.dens = str2double(attribute.Value);
+                else
+                    warn(['Material property ', attribute.Name,' not recognized']);
+                end
+            end
         end
         
         function obj = calcConstitutive(obj, problemType)

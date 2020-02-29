@@ -39,9 +39,9 @@ classdef Domain < handle
             obj.n_elems = obj.n_elems+1;
         end
         
-        function obj = new_material(obj, name, young, poisson, density)
+        function obj = new_material(obj, attribute_list)
            % Creates a new material and adds it to materials
-           obj.materials{end+1} = Material(obj.n_materials+1, name, young, poisson, density);
+           obj.materials{end+1} = Material(obj.n_materials+1, attribute_list);
            obj.n_materials = obj.n_materials + 1;
         end
         
@@ -50,52 +50,49 @@ classdef Domain < handle
             % Will use new_node, new_elem and new_material to add them
             % Must read in order: Materials, then nodes, then elements
             
-            % Placeholder for testing:
-            obj.DOF_per_node = 2;
-            obj.integrationDegree = 6;
-            
             % The real deal:
+            obj.loadProblemSettings(fileName);
             obj.loadMaterials(fileName);
             obj.loadMesh(fileName);
+        end
+        
+        function obj = loadProblemSettings(obj, fileName)
+            % Reads the problem settings file
+            
+            % Opening file
+            settingsFileName = [fileName,'/problem_settings.txt'];
+            settingsFile = fopen(settingsFileName);
+            if(settingsFile < 1)
+                error(['Failed to find file ',settingsFileName]);
+            end
+            
+            while ~feof(settingsFile)
+                line = fgetl(settingsFile);
+                data = split(line);
+                
+                if(strcmp(data{1},'DoF_per_Node'))
+                    obj.DOF_per_node = str2double(data{3});
+                elseif(strcmp(data{1},'integration_degree'))
+                    obj.integrationDegree = str2double(data{3});
+                end
+                % More elseifs ?
+            end
+            
+            
         end
         
         function obj = loadMaterials(obj, fileName)
             % Reads the materials file. Called from readFromFile
             
-            % Opening file
-            materialsFileName = [fileName,'/materials.mtr'];
-            materialsFile = fopen(materialsFileName);
-            if(materialsFile < 1)
-                error(['Failed to find file ',materialsFileName]);
-            end
-            
-            % Finding start of list
-            line = fgetl(materialsFile);
-            while(~strcmp(line,'Materials'))
-                line = fgetl(materialsFile);
-            end
-            
-            % Running through list
-            line = fgetl(materialsFile);
-            while(~strcmp(line,'End Materials'))
-                data = split(line);
-
-                if size(data,1) == 0  || data{1}(1) == '#' % Comments skipped
-                    line = fgetl(materialsFile);
-                    continue
+            materialsFileName = [fileName,'/materials.xml'];
+            xml_root = parseXML(materialsFileName);
+                        
+            for xml_node = xml_root.Children
+                if(strcmp(xml_node.Name,'material'))
+                    obj.new_material(xml_node.Attributes);
                 end
-                
-                name = data{1};
-                young = str2double(data{2});
-                poisson = str2double(data{3});
-                density = str2double(data{4});
-                
-                obj.new_material(name, young, poisson, density);
-                
-                line = fgetl(materialsFile);
             end
             
-            fclose(materialsFile);
         end
         
         function obj = loadMesh(obj, fileName)
