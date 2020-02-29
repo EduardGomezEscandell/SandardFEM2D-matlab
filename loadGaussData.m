@@ -76,7 +76,7 @@ function gaussData = loadGaussTriangle(domain)
     
     if ~found
         fclose(fileGauss);
-        error(['Failed to retrieve Gauss points in segment of order ',num2str(domain.integrationDegree)]);
+        error(['Failed to retrieve Gauss points in triangle of order ',num2str(domain.integrationDegree)]);
     end
     
     gaussData = cell(n_points,1);
