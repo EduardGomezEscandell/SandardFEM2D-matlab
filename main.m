@@ -8,7 +8,7 @@ dom.readFromFile(inputFileName);
 
 % Loading math data
 gauss_data = loadGaussData(dom);
-gauss_data = calcShapeFunctions(gauss_data, dom);
+calcShapeFunctions(gauss_data, dom);
 
 % Assembling system
 seq = SystemOfEquations(dom.n_elems*dom.nodes_per_elem);
