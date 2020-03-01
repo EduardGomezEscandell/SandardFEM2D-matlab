@@ -83,12 +83,15 @@ function gaussData = loadGaussTriangle(domain)
     domain.integrationDegree = n_points-1;
     
     % Loading data
-    for i=1:n_points
+    for id=1:n_points
         line = fgetl(fileGauss);
         data = split(line);
-        w = str2double(data(2));
-        z = str2double(data(3));
-        gaussData{i} = Gauss_point(w, z);
+        L = zeros(1,3);
+        L(1) = str2double(data(1));
+        L(2) = str2double(data(2));
+        L(3) = 1 - L(1) - L(2);
+        w = str2double(data(3));
+        gaussData{id} = Gauss_point(id, w, L);     
     end
     
     % Closing file

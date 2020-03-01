@@ -7,9 +7,11 @@ dom = Domain();
 dom.readFromFile(inputFileName);
 
 % Loading math data
-gaussData = loadGaussData(dom);
+gauss_data = loadGaussData(dom);
+gauss_data = calcShapeFunctions(gauss_data, dom);
 
 % Assembling system
+seq = SystemOfEquations(dom.n_elems*dom.nodes_per_elem);
 
 % Solving
 
