@@ -1,22 +1,27 @@
-function gauss_data = calcShapeFunctions(gauss_data, domain)
+function calcShapeFunctions(gauss_data, domain)
+    % This function is in charge of fillling in the fields .N and .gradN of
+    % the gauss points in the cell array gauss_data
+    
     switch(domain.n_dimensions)
         case 1
-            % Fill in
+            % Fill in for bar element
         case 2
             switch(domain.elem_type)
-                case 'T'
-                    gauss_data = shape_functions_triangle(gauss_data, domain);
-                case 'Q'
+                case 'T'    % 2D triangular elements
+                    shape_functions_triangle(gauss_data, domain);
+                case 'Q'    % 2D quadrilateral elements
                     
             end
         case 3
-            % Fill in for 3D
+            % Fill in for 3D elements
         otherwise
             error('Only dimensions 1-3 are supported')
     end
 end
 
-function gauss_data = shape_functions_triangle(gauss_data, domain)
+function shape_functions_triangle(gauss_data, domain)
+    % Filling the shape function data point by point for traingular 2D
+    % elements
     for i = 1:size(gauss_data,1)
         lagrange_polynomial_triangle(gauss_data{i}, domain)
     end
@@ -32,6 +37,20 @@ function lagrange_polynomial_triangle(gauss_point, domain)
     
     for i=0:n
         for j=0:(n - i)
+            % Meaning of [i,j]:
+            % This indices refer to the shape functions. The shape function
+            % i,j is that which is zero in all nodes except for the node
+            % with local indices [i,j]. On a sample triangle of
+            % interpolation degree of 3, these look like:
+            %
+            % [3,0]
+            % [2,0] [2,1]
+            % [1,0] [1,1] [1,2]
+            % [0,0] [0,1] [0,2] [0,3]
+            %
+            % I made them go from 0 to n because the formulas I found work
+            % with indices starting at 0
+            
             % Shape function
             gauss_point.N(i+1,j+1) = F(x) * G(x) * H(x,y);
             
