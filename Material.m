@@ -6,6 +6,7 @@ classdef Material < handle
        v    % Poisson modullus
        D    % Constutive matrix
        dens % Density
+       k    % Thermal coefficient
     end
     
     methods
@@ -20,6 +21,8 @@ classdef Material < handle
                     obj.v = str2double(attribute.Value);
                 elseif strcmp(attribute.Name,'Density')
                     obj.dens = str2double(attribute.Value);
+                elseif strcmp(attribute.Name,'Thermal')
+                    obj.k = str2double(attribute.Value);
                 else
                     warn(['Material property ', attribute.Name,' not recognized']);
                 end

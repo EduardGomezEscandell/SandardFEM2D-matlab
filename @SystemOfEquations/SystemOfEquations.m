@@ -19,7 +19,7 @@ classdef SystemOfEquations < handle
            obj.isSolved = true;
         end
         
-        function obj = assemble(obj)
+        function obj = assemble_laplacian(obj)
             for i=2:obj.n
                obj.K(i,i) = 2;
                obj.K(i,i-1) = -1;
@@ -29,6 +29,9 @@ classdef SystemOfEquations < handle
             obj.K(end,end) = 1;
             obj.b(end) = 1;
         end
+        
+        obj = assemble_thermal(obj, dom)
+        obj = assemble_stress_2D(obj, dom)
         
         function obj = plotResult(obj)
             plot(obj.u);
