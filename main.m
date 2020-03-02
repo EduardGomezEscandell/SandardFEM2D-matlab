@@ -7,8 +7,8 @@ dom = Domain();
 dom.readFromFile(input_dir);
 
 % Loading math data
-gauss_data = loadGaussData(dom);
-calcShapeFunctions(gauss_data, dom);
+gauss_data = loadGaussData(domain);
+calcShapeFunctions(gauss_data, domain);
 
 % Assembling system
 seq = SystemOfEquations(dom.n_nodes*dom.DOF_per_node);

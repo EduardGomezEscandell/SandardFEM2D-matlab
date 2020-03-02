@@ -45,22 +45,22 @@ classdef Domain < handle
            obj.n_materials = obj.n_materials + 1;
         end
         
-        function obj = readFromFile(obj, fileName)
+        function obj = readFromFile(obj, project_dir)
             % Reads from a file named fileName to load the geomtery
             % Will use new_node, new_elem and new_material to add them
             % Must read in order: Materials, then nodes, then elements
             
             % The real deal:
-            obj.loadProblemSettings(fileName);
-            obj.loadMaterials(fileName);
-            obj.loadMesh(fileName);
+            obj.loadProblemSettings(project_dir);
+            obj.loadMaterials(project_dir);
+            obj.loadMesh(project_dir);
         end
         
-        function obj = loadProblemSettings(obj, fileName)
+        function obj = loadProblemSettings(obj, project_dir)
             % Reads the problem settings file
             
             % Opening file
-            settingsFileName = [fileName,'/problem_settings.txt'];
+            settingsFileName = [project_dir,'/problem_settings.txt'];
             settingsFile = fopen(settingsFileName);
             if(settingsFile < 1)
                 error(['Failed to find file ',settingsFileName]);
@@ -81,10 +81,10 @@ classdef Domain < handle
             
         end
         
-        function obj = loadMaterials(obj, fileName)
+        function obj = loadMaterials(obj, project_dir)
             % Reads the materials file. Called from readFromFile
             
-            materialsFileName = [fileName,'/materials.xml'];
+            materialsFileName = [project_dir,'/materials.xml'];
             xml_root = parseXML(materialsFileName);
                         
             for xml_node = xml_root.Children
@@ -95,11 +95,11 @@ classdef Domain < handle
             
         end
         
-        function obj = loadMesh(obj, fileName)
+        function obj = loadMesh(obj, project_dir)
              % Reads the mesh file. Called from readFromFile
             
             % Opening file
-            meshFileName = [fileName,'/mesh.msh'];
+            meshFileName = [project_dir,'/mesh.msh'];
             meshFile = fopen(meshFileName);
             if(meshFile < 1)
                 error(['Failed to find file ',meshFileName]);
