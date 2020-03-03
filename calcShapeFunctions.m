@@ -35,30 +35,38 @@ function lagrange_polynomial_triangle(gauss_point, domain)
     y = X(2);
     n = domain.interpolationDegree;
     
-    for i=0:n
-        for j=0:(n - i)
-            % Meaning of [i,j]:
-            % This indices refer to the shape functions. The shape function
-            % i,j is that which is zero in all nodes except for the node
-            % with local indices [i,j]. On a sample triangle of
-            % interpolation degree of 3, these look like:
-            %
-            % [3,0]
-            % [2,0] [2,1]
-            % [1,0] [1,1] [1,2]
-            % [0,0] [0,1] [0,2] [0,3]
-            %
-            % I made them go from 0 to n because the formulas I found work
-            % with indices starting at 0
-            
-            % Shape function
-            gauss_point.N(i+1,j+1) = F(x) * G(x) * H(x,y);
-            
-            % Shape function d/dx
-            gauss_point.gradN{1}(i+1,j+1) = n*G(y)*(F_x(x)*H(x,y) + F(x)*H_x(x,y));
-            
-            % Shape function d/dy
-            gauss_point.gradN{2}(i+1,j+1) = n*F(x)*(G_y(y)*H(x,y) + G(y)*H_y(x,y));
+    i = 0;
+    j = 0;
+    for nd = 1:domain.nodes_per_elem
+        % Meaning of [i,j]:
+        % This indices refer to the shape functions. The shape function
+        % i,j is that which is zero in all nodes except for the node
+        % with local indices [i,j]. On a sample triangle of
+        % interpolation degree of 3, these look like:
+        %
+        % [3,0]
+        % [2,0] [2,1]
+        % [1,0] [1,1] [1,2]
+        % [0,0] [0,1] [0,2] [0,3]
+        %
+        % I made them go from 0 to n because the formulas I found work
+        % with indices starting at 0
+        %
+        % This indexing only appears here, nowhere else in the program
+
+        % Shape function
+        gauss_point.N{nd} = F(x) * G(x) * H(x,y);
+
+        % Shape function d/dx
+        gauss_point.gradN{nd}(1,1) = n*G(y)*(F_x(x)*H(x,y) + F(x)*H_x(x,y));
+
+        % Shape function d/dy
+        gauss_point.gradN{nd}(2,1) = n*F(x)*(G_y(y)*H(x,y) + G(y)*H_y(x,y));
+
+        j = j + 1;
+        if j>(domain.interpolationDegree - i)
+            j = 0;
+            i = i+1;
         end
     end
     
