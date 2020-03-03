@@ -1,2 +1,0 @@
-DoF_per_Node = 2
-integration_degree = 7
