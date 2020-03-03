@@ -32,45 +32,18 @@ classdef SystemOfEquations < handle
         
         function obj = fake_solution(obj, domain, solution_fun)
             for i=1:domain.n_nodes
-               obj.u(i) = solution_fun(domain.nodes{i}.X);
+                sol = solution_fun(domain.nodes{i}.X);
+                for j=1:domain.DOF_per_node
+                    obj.u((i-1)*domain.n_dimensions + j) = sol(j);
+                end
             end
-            isSolved = true;
+            obj.isSolved = true;
         end
         
         obj = assemble_thermal(obj, dom)
         obj = assemble_stress_2D(obj, dom)
+        plotResult(obj, domain)
+        export_to_vtk(obj, domain, input_dir)
         
-        function obj = plotResult(obj, domain)
-            switch(domain.n_dimensions)
-                case 1
-                    plot(obj.u);
-                    grid on;
-                    xlabel('Node');
-                    ylabel('u');
-                case 2
-                    switch(domain.elem_type)
-                        case 'T'
-                            % Triangular elements
-                            for el = 1:domain.n_elems
-                                element = domain.elems{el};
-                                X = zeros(3,3);
-                                for i=1:3
-                                    X(i,1:2) = element.nodes{i}.X;
-                                    node_id = element.nodes{i}.id;
-                                	X(i,3) = obj.u(node_id);
-                                end
-                                trisurf([1,2,3],X(:,1),X(:,2),X(:,3));
-                                hold on
-                            end
-                            colorbar
-                            xlabel('x')
-                            ylabel('y')
-                            zlabel('u')
-                            hold off
-                        case 'Q'
-                            % Quad elements
-                    end
-            end
-        end
     end
 end
