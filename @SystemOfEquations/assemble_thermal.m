@@ -8,6 +8,18 @@ function assemble_thermal(obj, domain, gauss_data)
     	for i = 1:domain.nodes_per_elem
             I = element.nodes{i}.id; % global coordinate
             
+            % Load vector:
+            
+            f = 0;
+            for g_p = gauss_data'
+                gp = g_p{1}; % Stupid matlab
+                % Weak form: \int N_i·s d\Omega
+                f = f + gp.w * gp.N{i} * domain.source_term;
+            end
+            obj.b(I) = f * element.area/2;
+            
+            % Stiffness matrix:
+            
             % Looping through nodes --> j
     		for j = i:domain.nodes_per_elem
                 J = element.nodes{j}.id; % global coordinate

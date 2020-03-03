@@ -8,6 +8,9 @@ classdef Domain < handle
        n_elems          % size of elems
        n_materials      % size of materials
        
+       n_dirichlet
+       source_term
+       
        n_dimensions     % number of dimensions
        DOF_per_node     % number of DOF per node
        problem_type     % type of problem
@@ -32,6 +35,7 @@ classdef Domain < handle
             obj.n_nodes = 0;
             obj.n_elems = 0;
             obj.n_materials = 0;
+            obj.n_dirichlet = 0;
         end
         
         %% Methods to read from file
@@ -40,12 +44,14 @@ classdef Domain < handle
             obj.load_problem_settings(project_dir);
             obj.load_materials(project_dir);
             obj.load_mesh(project_dir);
+            obj.load_boundaries(project_dir);
         end
         
         %Functions defined elsewhere. All used by read_from_file
         load_mesh(obj, project_dir)
         load_materials(obj, project_dir)
         load_problem_settings(obj, project_dir)
+        load_boundaries(obj, project_dir)
         
         %% Methods to add items
         
