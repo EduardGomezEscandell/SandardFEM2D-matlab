@@ -1,6 +1,5 @@
 % Data entry
 input_dir = 'data/square_dense';
-outputFileName = 'results/square.res';
 
 % Loading geomery
 domain = Domain();
@@ -14,13 +13,25 @@ calcShapeFunctions(gauss_data, domain);
 seq = SystemOfEquations(domain.n_nodes*domain.DOF_per_node);
 
 % Solving
-seq.fake_solution(domain, @solution_fun);
+seq.fake_solution(domain, @made_up_solution);
+seq.isSolved = true;
 
 % Post-processing
-seq.plotResult(domain);
-seq.export_to_vtk(domain, input_dir);
+exageration = 10;
+seq.plot_result(domain, exageration);
+seq.export_to_vtk(domain, input_dir, exageration);
 
-function z = solution_fun(X)
-    z(1) = 0.01*sin(3*X(1));
-    z(2) = 0.03*X(1);
+% Support function
+function z = made_up_solution(X, domain)
+    switch domain.n_dimensions
+        case 1
+            z = 0.03*sin(X(1));
+        case 2
+            z(1) = 0.02*sin(2*X(1));
+            z(2) = 0.03*X(1);
+        case 3
+            z(1) = 0.02*sin(3*X(1));
+            z(2) = 0.03*X(1);
+            z(3) = -2*X(2);
+    end
 end

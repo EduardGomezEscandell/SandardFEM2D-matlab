@@ -1,5 +1,4 @@
-function plotResult(obj, domain)
-    exag = 10;
+function plot_result(obj, domain, exag)
     switch(domain.n_dimensions)
         case 1
             plot(obj.u);

@@ -32,9 +32,9 @@ classdef SystemOfEquations < handle
         
         function obj = fake_solution(obj, domain, solution_fun)
             for i=1:domain.n_nodes
-                sol = solution_fun(domain.nodes{i}.X);
+                sol = solution_fun(domain.nodes{i}.X, domain);
                 for j=1:domain.DOF_per_node
-                    obj.u((i-1)*domain.n_dimensions + j) = sol(j);
+                    obj.u((i-1)*domain.DOF_per_node + j) = sol(j);
                 end
             end
             obj.isSolved = true;
@@ -42,8 +42,8 @@ classdef SystemOfEquations < handle
         
         obj = assemble_thermal(obj, dom)
         obj = assemble_stress_2D(obj, dom)
-        plotResult(obj, domain)
-        export_to_vtk(obj, domain, input_dir)
+        plot_result(obj, domain, exag)
+        export_to_vtk(obj, domain, input_dir, exageration)
         
     end
 end
