@@ -18,6 +18,10 @@ function load_problem_settings(obj, project_dir)
             obj.integrationDegree = str2double(data{3});
         elseif(strcmp(data{1},'problem_type'))
             obj.problem_type = obtain_problem_type(data{3});
+        elseif(strcmp(data{1},'source_term'))
+            for i=3:size(data,1)
+                obj.source_term(end+1) = str2double(data{i});
+            end
         end
         % More elseifs ?
     end
