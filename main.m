@@ -12,29 +12,16 @@ gauss_data = loadGaussData(domain);
 calcShapeFunctions(gauss_data, domain);
 
 % Assembling system
-seq = SystemOfEquations(domain.n_nodes*domain.DOF_per_node);
+seq = SystemOfEquations(domain);
 seq.assemble(domain, gauss_data);
+seq.enforce_boundaries(domain);
 
 % Solving
-seq.fake_solution(domain, @made_up_solution);
-seq.isSolved = true;
+seq.solve()
+seq.clean_solution(domain)
+% seq.fake_solution(domain, @made_up_solution);
 
 % Post-processing
 exageration = 10;
 seq.plot_result(domain, exageration);
-% seq.export_to_vtk(domain, project_dir, exageration);
-
-% Support function
-function z = made_up_solution(X, domain)
-    switch domain.n_dimensions
-        case 1
-            z = 0.03*sin(X(1));
-        case 2
-            z(1) = 0.02*sin(2*X(1));
-            z(2) = 0.03*X(1);
-        case 3
-            z(1) = 0.02*sin(3*X(1));
-            z(2) = 0.03*X(1);
-            z(3) = -2*X(2);
-    end
-end
+seq.export_to_vtk(domain, project_dir, exageration);
