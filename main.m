@@ -1,9 +1,9 @@
 % Data entry
-input_dir = 'data/square_dense';
+project_dir = 'data/square_dense';
 
 % Loading geomery
 domain = Domain();
-domain.readFromFile(input_dir);
+domain.readFromFile(project_dir);
 
 % Loading math data
 gauss_data = loadGaussData(domain);
@@ -19,7 +19,7 @@ seq.isSolved = true;
 % Post-processing
 exageration = 10;
 seq.plot_result(domain, exageration);
-seq.export_to_vtk(domain, input_dir, exageration);
+seq.export_to_vtk(domain, project_dir, exageration);
 
 % Support function
 function z = made_up_solution(X, domain)
