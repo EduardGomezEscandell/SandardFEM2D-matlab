@@ -38,5 +38,23 @@ classdef Gauss_point < handle
                     error('Only dimensions 1-3 are supported')
             end
         end
+        
+        function triangle_shape_fun(obj,x,y,n)
+            switch n % Order of interpolation
+                case 1
+                    % Linear
+                    obj.N{1} = 1 - x - y;
+                    obj.N{2} = x;
+                    obj.N{3} = y;
+                    obj.gradN{1} = [-1, -1]';
+                    obj.gradN{2} = [ 1,  0]';
+                    obj.gradN{3} = [ 0,  1]';
+                case 2
+                    % Quadratic: Work in progress
+                    error('Quadratic shape functions not yet implemented')
+                otherwise
+                    error('Higher-than-quadratic shape functions unavailable');
+            end
+        end
     end
 end
