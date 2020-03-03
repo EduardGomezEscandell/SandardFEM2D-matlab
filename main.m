@@ -1,9 +1,11 @@
+close all; clc; clear;
+
 % Data entry
 project_dir = 'data/square_dense';
 
 % Loading geomery
 domain = Domain();
-domain.readFromFile(project_dir);
+domain.read_from_file(project_dir);
 
 % Loading math data
 gauss_data = loadGaussData(domain);
@@ -11,6 +13,7 @@ calcShapeFunctions(gauss_data, domain);
 
 % Assembling system
 seq = SystemOfEquations(domain.n_nodes*domain.DOF_per_node);
+seq.assemble(domain, gauss_data);
 
 % Solving
 seq.fake_solution(domain, @made_up_solution);
@@ -19,7 +22,7 @@ seq.isSolved = true;
 % Post-processing
 exageration = 10;
 seq.plot_result(domain, exageration);
-seq.export_to_vtk(domain, project_dir, exageration);
+% seq.export_to_vtk(domain, project_dir, exageration);
 
 % Support function
 function z = made_up_solution(X, domain)

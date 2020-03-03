@@ -19,6 +19,15 @@ classdef SystemOfEquations < handle
            obj.isSolved = true;
         end
         
+        function assemble(obj, domain, gauss_data)
+            switch domain.problem_type
+                case -1
+                    obj.assemble_thermal(domain, gauss_data)
+                case 1
+                    obj.assemble_stress_2D(domain, gauss_data)
+            end
+        end
+        
         function obj = assemble_laplacian(obj)
             for i=2:obj.n
                obj.K(i,i) = 2;
@@ -40,10 +49,10 @@ classdef SystemOfEquations < handle
             obj.isSolved = true;
         end
         
-        obj = assemble_thermal(obj, dom)
-        obj = assemble_stress_2D(obj, dom)
         plot_result(obj, domain, exag)
         export_to_vtk(obj, domain, input_dir, exageration)
+        assemble_thermal(obj, domain, gauss_data)
+        assemble_stress_2D(obj, domain, gauss_data)
         
     end
 end

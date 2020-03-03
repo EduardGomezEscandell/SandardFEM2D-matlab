@@ -1,3 +1,3 @@
-function obj = assemble_stress_2D(obj, domain)
+function assemble_stress_2D(obj, domain, gauss_data)
     % WIP
 end
