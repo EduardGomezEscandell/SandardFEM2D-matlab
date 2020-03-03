@@ -11,7 +11,7 @@ gauss_data = loadGaussData(dom);
 calcShapeFunctions(gauss_data, dom);
 
 % Assembling system
-seq = SystemOfEquations(dom.n_elems*dom.nodes_per_elem);
+seq = SystemOfEquations(dom.n_nodes);
 
 % Solving
 seq.fake_solution(dom, @solution_fun);
