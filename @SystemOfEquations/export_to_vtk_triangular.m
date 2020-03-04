@@ -25,12 +25,8 @@ function export_to_vtk_triangular(obj, domain, project_dir, exageration)
         
         % Coordinate Z
         for j=i+1:3
-            % If 2D+ dimensional solution, put a filler 0
+            % Filler zeros up to 3D
             value_z = 0;
-            if domain.DOF_per_node == 1
-                % If scalar solution, plotted as z-value
-                value_z = obj.u(nd) * exageration;
-            end
             node_values = [node_values,sprintf('      %14.8E',value_z)];
         end
         node_values = [node_values,'\n'];
@@ -68,7 +64,13 @@ function export_to_vtk_triangular(obj, domain, project_dir, exageration)
     
     if(domain.DOF_per_node == 1)
         %% Scalar solution vector
-        fprintf(file_out,'SCALARS scal float\n');
+        switch domain.problem_type
+            case -1
+                value_name = 'Temperature';
+            otherwise
+                value_name = 'scal';
+        end
+        fprintf(file_out,sprintf('SCALARS %s float\n',value_name));
         fprintf(file_out,'LOOKUP_TABLE default\n');
         for nd = 1:domain.n_nodes
             fprintf(file_out,sprintf('    %10.5E\n', exageration*obj.u(nd)));
@@ -79,7 +81,7 @@ function export_to_vtk_triangular(obj, domain, project_dir, exageration)
         for nd = 1:domain.n_nodes
             node_vals = '';
             for i=1:domain.n_dimensions
-                val = exageration * obj.u((nd-1)*domain.n_dimensions + i);
+                val = obj.u((nd-1)*domain.n_dimensions + i);
                 node_vals = [node_vals, sprintf('%15.5e    ',val)];
             end
             for j = i+1:3
