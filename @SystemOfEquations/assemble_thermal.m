@@ -30,8 +30,9 @@ function assemble_thermal(obj, domain, gauss_data)
                     gp = g_p{1}; % Stupid matlab
                     % Weak form: \int \nabla N_i·k·\nabla N_j d\Omega
                     dotprod =  (element.invJ * gp.gradN{i})' ...
+                             * element.material.k ...
                              * element.invJ * gp.gradN{j};
-    				k = k + gp.w * dotprod * element.material.k;
+    				k = k + gp.w * dotprod;
                 end
                 k = k * element.area/2;
                 

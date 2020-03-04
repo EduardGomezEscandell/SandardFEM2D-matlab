@@ -16,13 +16,13 @@ classdef Material < handle
                 if strcmp(attribute.Name,'name')
                     obj.name = attribute.Value;
                 elseif strcmp(attribute.Name,'E')
-                    obj.E = str2double(attribute.Value);
+                    obj.E = interpret_attribute(attribute.Value);
                 elseif strcmp(attribute.Name,'Poisson')
-                    obj.v = str2double(attribute.Value);
+                    obj.v = interpret_attribute(attribute.Value);
                 elseif strcmp(attribute.Name,'Density')
-                    obj.dens = str2double(attribute.Value);
+                    obj.dens = interpret_attribute(attribute.Value);
                 elseif strcmp(attribute.Name,'Thermal')
-                    obj.k = str2double(attribute.Value);
+                    obj.k  = interpret_attribute(attribute.Value);
                 else
                     warn(['Material property ', attribute.Name,' not recognized']);
                 end
@@ -45,5 +45,18 @@ classdef Material < handle
             end
             
         end
+    end
+end
+
+function att = interpret_attribute(text)
+    % Taxes the attribute and parses it into either a value, a vector or a
+    % matrix
+    att = [];
+    rows = split(text,';');
+    for i = 1:size(rows)
+       items = split(rows{i},',');
+       for j = 1:size(items)
+           att(i,j) = str2double(items{j});
+       end
     end
 end
