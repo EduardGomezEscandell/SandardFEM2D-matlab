@@ -1,4 +1,4 @@
-function export_to_vtk_triangular(obj, domain, project_dir, exageration)
+function export_to_vtk_triangular(obj, domain, project_dir)
     %%  Opening file
     output_filename = [project_dir,'/result.vtk'];
     file_out = fopen(output_filename,'w+');
@@ -73,7 +73,7 @@ function export_to_vtk_triangular(obj, domain, project_dir, exageration)
         fprintf(file_out,sprintf('SCALARS %s float\n',value_name));
         fprintf(file_out,'LOOKUP_TABLE default\n');
         for nd = 1:domain.n_nodes
-            fprintf(file_out,sprintf('    %10.5E\n', exageration*obj.u(nd)));
+            fprintf(file_out,sprintf('    %10.5E\n', obj.u(nd)));
         end
     else
         %% Higher dimension solution vector

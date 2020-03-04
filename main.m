@@ -19,9 +19,8 @@ seq.enforce_boundaries(domain);
 % Solving
 seq.solve()
 seq.clean_solution(domain)
-% seq.fake_solution(domain, @made_up_solution);
 
 % Post-processing
 exageration = 10;
 seq.plot_result(domain, exageration);
-seq.export_to_vtk(domain, project_dir, exageration);
+seq.export_to_vtk(domain, project_dir);

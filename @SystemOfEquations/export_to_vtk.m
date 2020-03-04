@@ -1,11 +1,11 @@
-function export_to_vtk(obj, domain, project_dir, exageration)
+function export_to_vtk(obj, domain, project_dir)
     switch domain.n_dimensions
         case 1
             % TODO 1D
         case 2
             switch domain.elem_type
                 case 'T' % Triangle
-                    obj.export_to_vtk_triangular(domain, project_dir, exageration)
+                    obj.export_to_vtk_triangular(domain, project_dir)
                 case 'Q' % Quad
             end
         case 3

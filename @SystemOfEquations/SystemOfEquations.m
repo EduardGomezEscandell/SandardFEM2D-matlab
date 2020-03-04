@@ -1,13 +1,15 @@
 classdef SystemOfEquations < handle
     properties
-       n
-       K
-       b
-       u
-       H
-       e
-       isSolved = false
-       u_clean
+       n  % Size of the system
+       K  % Stiffnes matrix
+       b  % Load vector
+       
+       H  % Lagrangian multipliers matrix
+       e  % Lagrangian multipliers vector
+       
+       u  % Solution vector
+       u_clean  % Solution matrix where each row is a node
+       isSolved = false % Solved flag
     end
     methods
         function obj = SystemOfEquations(domain)
@@ -73,7 +75,7 @@ classdef SystemOfEquations < handle
                 end
             end
             
-            % Copying into equatin system
+            % Copying into equation system
             obj.K(domain.n_nodes+1:end,1:domain.n_nodes) = obj.H;
             obj.K(1:domain.n_nodes,domain.n_nodes+1:end) = obj.H';
             obj.b(domain.n_nodes+1:end) = obj.e;
@@ -90,7 +92,7 @@ classdef SystemOfEquations < handle
         end
         
         plot_result(obj, domain, exag)
-        export_to_vtk(obj, domain, input_dir, exageration)
+        export_to_vtk(obj, domain, input_dir)
         assemble_thermal(obj, domain, gauss_data)
         assemble_stress_2D(obj, domain, gauss_data)
         
