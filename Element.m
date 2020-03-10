@@ -2,6 +2,7 @@ classdef Element < handle
    properties
        id
        nodes
+       edges
        material
        jacobian
        invJ
@@ -10,12 +11,18 @@ classdef Element < handle
    methods
        function obj = Element(domain, id, node_ids)
            obj.id = id;
-
            obj.nodes = cell(domain.nodes_per_elem,1);
+           obj.edges = {};
            for nd = 1:domain.nodes_per_elem
                obj.nodes{nd} = domain.nodes{node_ids(nd)};
            end
            obj.area = -1;
+       end
+       
+       function set_edges(obj, domain, edge_ids)
+           for eg = edge_ids
+               obj.edges{end+1} = domain.edges{eg};
+           end
        end
        
        function set_material(obj, domain, material_id)

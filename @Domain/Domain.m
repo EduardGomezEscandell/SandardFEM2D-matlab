@@ -1,10 +1,12 @@
 classdef Domain < handle
     properties
        nodes            % Cell array of Node class
+       edges            % Cell array of Edge class
        elems            % Cell array of Element class
        materials        % Cell array of Material class
        
        n_nodes          % size of nodes
+       n_edges          % size of edges
        n_elems          % size of elems
        n_materials      % size of materials
        
@@ -55,13 +57,19 @@ classdef Domain < handle
         
         %% Methods to add items
         
-        function obj = new_node(obj, X)
+        function new_node(obj, X)
             % Creates a new node and adds it to nodes
             obj.nodes{end+1} = Node(obj.n_nodes+1,X, obj.DOF_per_node);
             obj.n_nodes = obj.n_nodes + 1;
         end
         
-        function obj = new_elem(obj, node_ids, material_id, varargin)
+        function edge = new_edge(obj, node_ids)
+            % Creates a new edge and adds it to edges.
+            obj.edges{end+1} = Edge(obj, obj.n_edges+1, node_ids);
+            obj.n_edges = obj.n_edges + 1;
+        end
+        
+        function new_elem(obj, node_ids, material_id, varargin)
             % Creates a new element and adds it to elems. If material_id is
             % specified, then it is prescribed. Otherwise it's assumed to
             % be material 1
