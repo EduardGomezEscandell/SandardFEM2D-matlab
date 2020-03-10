@@ -10,6 +10,7 @@ function calcShapeFunctions(gauss_data, domain)
                 case 'T'    % 2D triangular elements
                     shape_functions_triangle(gauss_data, domain);
                 case 'Q'    % 2D quadrilateral elements
+                    shape_functions_quad(gauss_data, domain);
                     
             end
         case 3
@@ -27,6 +28,14 @@ function shape_functions_triangle(gauss_data, domain)
     end
 end
 
+function shape_functions_quad(gauss_data, domain)
+    % Filling the shape function data point by point for quadrilateral 2D
+    % elements
+    for i = 1:size(gauss_data,1)
+        lagrange_polynomial_quad(gauss_data{i}, domain)
+    end
+end
+
 
 function lagrange_polynomial_triangle(gauss_point, domain)
     Xelem = [0 0; 1 0; 0 1]; % Isoparametric triangle
@@ -35,4 +44,13 @@ function lagrange_polynomial_triangle(gauss_point, domain)
     y = X(2);
     n = domain.interpolationDegree;
     gauss_point.triangle_shape_fun(x,y,n);
+end
+
+function lagrange_polynomial_quad(gauss_point, domain)
+    Xelem = [-1 -1; 1 -1; 1 1; -1 1]; % Isoparametric quadrilateral
+    X = gauss_point.changeCoords(domain, Xelem);
+    x = X(1);
+    y = X(2);
+    n = domain.interpolationDegree;
+    gauss_point.quad_shape_fun(x,y,n);
 end
