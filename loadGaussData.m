@@ -4,8 +4,10 @@ function gaussData = loadGaussData(dom)
     elseif(dom.n_dimensions == 2)
         if(dom.elem_type == 'T')
             gaussData = loadGaussTriangle(dom);
+%         elseif(dom.elem_type == 'Q')              %% FIX
+%             gaussData = loadGaussSegment(dom);
         end
-        % else  --> Quads
+        
     end
     % else --> 3D
 end

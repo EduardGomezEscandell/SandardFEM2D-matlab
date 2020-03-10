@@ -3,7 +3,7 @@ close all; clc; clear;
 % Data entry
 project_dir = 'data/square_dense';
 
-% Loading geomery
+% Loading geometry
 domain = Domain();
 domain.read_from_file(project_dir);
 
