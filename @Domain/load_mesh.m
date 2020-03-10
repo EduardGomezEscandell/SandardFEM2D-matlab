@@ -66,13 +66,13 @@ function load_mesh(obj, project_dir)
             continue
         end
         
-        elem_id = str2double(data{1});
-        node_IDs = [];
-        for i=2:obj.nodes_per_elem
-            node_IDs(end+1) = str2double(data{i});
+        node_IDs = zeros(obj.nodes_per_elem,1);
+        
+        for i=1:obj.nodes_per_elem
+            node_IDs(i) = str2double(data{i+1});
         end
         
-        obj.elems{i}.add_nodes(node_IDs);
+        obj.new_elem(node_IDs)
         line = fgetl(meshFile);
     end
     
@@ -84,6 +84,7 @@ function load_mesh(obj, project_dir)
     end
     
     line = fgetl(meshFile);
+    node_IDs = [0,0];
     while(~strcmp(line,'End Edges'))
         data = split(line);
 
@@ -92,8 +93,8 @@ function load_mesh(obj, project_dir)
             continue
         end
         
-        node_IDs(2) = str2double(data{3});
-        node_IDs(1) = str2double(data{2});
+        node_IDs(2) = str2double(data{4});
+        node_IDs(1) = str2double(data{3});
         obj.new_edge(node_IDs);
         
         line = fgetl(meshFile);
@@ -117,13 +118,13 @@ function load_mesh(obj, project_dir)
         end
         
         edge_IDs = [];
-        
-        for i=2:size(data,2)
+        elem_ID = str2double(data{2});
+        for i=3:size(data,1)
             edge_IDs(end+1) = str2double(data{i});
         end
         
-        obj.new_elem(edge_IDs);
-
+        obj.elems{elem_ID}.set_edges(obj, edge_IDs);
+        
         line = fgetl(meshFile);
     end
 

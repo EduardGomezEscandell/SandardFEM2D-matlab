@@ -67,7 +67,7 @@ file_ou.write('End Elements-nodes\n\n')
 		
 file_ou.write('Edges\n')
 for i in range(len(edges)):
-	file_ou.write('%3d %3d %3d\n'%(i+1, edges[i][0], edges[i][1]))
+	file_ou.write(' %3d %3d %3d\n'%(i+1, edges[i][0], edges[i][1]))
 file_ou.write('End Edges\n')
 file_ou.write('\n')
 file_ou.write('Elements-edges\n')

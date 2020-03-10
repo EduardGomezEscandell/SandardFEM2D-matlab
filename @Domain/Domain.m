@@ -35,6 +35,7 @@ classdef Domain < handle
             obj.elems = cell(0);
             obj.materials = cell(0);
             obj.n_nodes = 0;
+            obj.n_edges = 0;
             obj.n_elems = 0;
             obj.n_materials = 0;
             obj.n_dirichlet = 0;
@@ -63,7 +64,7 @@ classdef Domain < handle
             obj.n_nodes = obj.n_nodes + 1;
         end
         
-        function edge = new_edge(obj, node_ids)
+        function new_edge(obj, node_ids)
             % Creates a new edge and adds it to edges.
             obj.edges{end+1} = Edge(obj, obj.n_edges+1, node_ids);
             obj.n_edges = obj.n_edges + 1;
