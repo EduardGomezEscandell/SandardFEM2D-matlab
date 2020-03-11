@@ -84,18 +84,26 @@ function load_mesh(obj, project_dir)
     end
     
     line = fgetl(meshFile);
-    node_IDs = [0,0];
     while(~strcmp(line,'End Edges'))
         data = split(line);
 
-        if size(data,2) == 0
+        if size(data,1) == 0
             line = fgetl(meshFile);
             continue
         end
         
-        node_IDs(2) = str2double(data{4});
-        node_IDs(1) = str2double(data{3});
-        obj.new_edge(node_IDs);
+        node_IDs = zeros(1,size(data,1) - 3);
+        for i = 3:size(data,1)-1
+            node_IDs(i-2) = str2double(data{i});
+        end
+        
+        if data{end} == 'B'
+            is_border = true;
+        else
+            is_border = false;
+        end
+        
+        obj.new_edge(node_IDs, is_border);
         
         line = fgetl(meshFile);
     end
