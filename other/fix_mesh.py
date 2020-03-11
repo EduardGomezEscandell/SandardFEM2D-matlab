@@ -2,20 +2,19 @@ def check_repeated_edge(edges, new_edge):
 	n_edges = len(edges)
 	for i in range(n_edges):
 		old_edge = edges[i]
-		if(old_edge[0] == new_edge[0] and old_edge[1] == new_edge[1]):
+		if(old_edge[0] == new_edge[0] and old_edge[-1] == new_edge[-1]):
 			return -i
-		if (old_edge[0] == new_edge[1] and old_edge[1] == new_edge[0]):
+		if (old_edge[0] == new_edge[-1] and old_edge[-1] == new_edge[0]):
 			return -i
 	return n_edges
 
 file_in = open('mesh.msh','r')
 file_ou = open('mesh.fmsh','w+')
 
-
-
+# Reading setup and re-printing
 for line in file_in:
 	data = line.split()
-	data[2] = '2'
+	data[2] = '2' # Reducing dymenstion to 2
 	elem_type = data[4]
 	file_ou.write(' '.join(data))
 	break
@@ -27,6 +26,7 @@ elif elem_type == 'Quad':
 
 file_ou.write('\n\n')
 
+# Reading and printing nodes
 for line in file_in:
 	file_ou.write(line)
 	if(line == 'End Coordinates\n'):
@@ -39,6 +39,10 @@ for line in file_in:
 		
 elements = []
 edges = []
+edge_repeated = []
+
+# Writting element-node connectivities
+# and obtaining edge-node and element-edge connectivites
 
 file_ou.write('Elements-nodes\n')
 
@@ -54,22 +58,34 @@ for line in file_in:
 			j = (i + 1) if (i+1<n_data) else (1)
 			new_edge = []
 			new_edge.append(int(data[i]))
+			if len(data) > corner_nodes+1 :
+				k = min(i,j)
+				new_edge.append(int(data[k + corner_nodes]))
 			new_edge.append(int(data[j]))
 			new_id = check_repeated_edge(edges, new_edge)
 			
 			if new_id >= 0: # Edge is new
 				edges.append(new_edge)
+				edge_repeated.append(False)
 				new_element.append(new_id)
 			else: # Edge is repeated
+				edge_repeated[-new_id] = True
 				new_element.append(-new_id)
 		elements.append(new_element)
 file_ou.write('End Elements-nodes\n\n')
 		
+# Printing edge-node connectivities
 file_ou.write('Edges\n')
 for i in range(len(edges)):
-	file_ou.write(' %3d %3d %3d\n'%(i+1, edges[i][0], edges[i][1]))
+	outp = ' %3d'%(i+1)
+	for j in range(len(edges[i])):
+		outp += ' %3d'%edges[i][j]
+	outp += ' D\n' if edge_repeated[i] else ' B\n' # Indicating wether its a domain edge or a border edge
+	file_ou.write(outp)
 file_ou.write('End Edges\n')
 file_ou.write('\n')
+
+# Printing element-edge connectivities
 file_ou.write('Elements-edges\n')
 for i in range(len(elements)):
 	outp = ' %3d'%(i+1)
