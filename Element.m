@@ -22,6 +22,9 @@ classdef Element < handle
        function set_edges(obj, domain, edge_ids)
            for eg = edge_ids
                obj.edges{end+1} = domain.edges{eg};
+               if domain.edges{eg}.is_boundary
+                    domain.edges{eg}.material = obj.material;
+               end
            end
        end
        

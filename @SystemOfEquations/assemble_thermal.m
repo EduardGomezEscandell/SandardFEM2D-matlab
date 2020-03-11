@@ -1,4 +1,5 @@
 function assemble_thermal(obj, domain, gauss_data)
+    
     % Looping through elements
     for el = 1:domain.n_elems
     	element = domain.elems{el};
@@ -11,8 +12,8 @@ function assemble_thermal(obj, domain, gauss_data)
             % Load vector:
             
             f = 0;
-            for g_p = gauss_data'
-                gp = g_p{1}; % Stupid matlab
+            for gp_cell = gauss_data.tris'
+                gp = gp_cell{1}; % Stupid matlab
                 % Weak form: \int N_iÂ·s d\Omega
                 f = f + gp.w * gp.N{i} * domain.source_term;
             end
@@ -26,9 +27,9 @@ function assemble_thermal(obj, domain, gauss_data)
                 
     			% Gauss quadrature
                 k = 0;
-    			for g_p = gauss_data'
-                    gp = g_p{1}; % Stupid matlab
-                    % Weak form: \int \nabla N_iÂ·kÂ·\nabla N_j d\Omega
+    			for gp_cell = gauss_data.tris'
+                    gp = gp_cell{1}; % Stupid matlab
+                    % Weak form: \int \nabla N_i·k·\nabla N_j d\Omega
                     dotprod =  (element.invJ * gp.gradN{i})' ...
                              * element.material.k ...
                              * element.invJ * gp.gradN{j};
@@ -42,7 +43,63 @@ function assemble_thermal(obj, domain, gauss_data)
                     obj.K(J,I) = obj.K(J,I) + k;
                 end
             
-            end
+            end            
     	end
+    end
+    
+    % Obtaining fluxes
+    
+    switch domain.n_dimensions
+        case 1
+            error('One dimension not yet supported')
+        case 2
+            for eg = 1:domain.n_edges
+                edge = domain.edges{eg};
+                if ~edge.is_boundary
+                    continue
+                end
+                
+                if size(edge.material.k,1) > 1
+                    % Obtaining normal vector
+                    n = edge.nodes{end}.X' - edge.nodes{1}.X';
+                    n = [0 1; -1 0]*n; % Rotating 90 deg to the right
+                    n = n / norm(n);   % Normalizing
+                else
+                    n = 1;
+                end
+
+                for i = 1:domain.nodes_per_edge
+                    node_i = edge.nodes{i};
+                    if node_i.BC_type == 'D' % Dirichlet BC
+                        for j = 1:domain.nodes_per_edge
+                            node_j = edge.nodes{j};
+                            if node_j.BC_type == 'D' % Dirichlet BC
+                                k = 0;
+                                for gp_cell = gauss_data.line'
+                                    gp = gp_cell{1}; % Thanks Matlab
+                                    k = k + gp.w *  gp.N{i} * gp.N{j} * n' * edge.material.k * n;
+                                end
+                                I = node_i.id;
+                                J = node_j.dirichlet_id + domain.n_nodes*domain.DOF_per_node;
+
+                                obj.K(I,J) = k;
+                            end
+                        end
+                    elseif node_i.BC_type == 'N' && node_i.BC_value ~= 0   % Neumann BC
+                            b = 0;
+                            for gp_cell = gauss_data.line'
+                                gp = gp_cell{1};
+                                b = b + gp.w * gp.N{i} * node_i.BC_value;
+                            end
+                            I = node_i.id;
+                            obj.b(I) = obj.b(I) + b;
+                    end
+                end
+            end
+
+        case 3
+            error('3D not yet supported')
+        otherwise
+            error('4D+ not supported')
     end
 end

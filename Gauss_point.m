@@ -13,7 +13,7 @@ classdef Gauss_point < handle
             obj.Z = Z;
         end
         
-        function X = changeCoords(obj, domain, Xelement)
+        function X = change_coordinates_triangle(obj, domain, Xelement)
             % Returns the converted coordinates from isoparametric space to 
             % x-y space
             % Xelement must be such that:
@@ -36,6 +36,27 @@ classdef Gauss_point < handle
                       
                 otherwise
                     error('Only dimensions 1-3 are supported')
+            end
+        end
+        
+        function segment_shape_fun(obj,x,n)
+            switch n
+                case 1
+                    % Linear
+                    obj.N{1} = 0.5*(1 - x);
+                    obj.N{2} = 0.5*(1 + x);
+                    obj.gradN{1} = -0.5;
+                    obj.gradN{2} =  0.5;
+                case 2
+                    % Quadratic
+                    obj.N{1} = 0.5 * x * (1 - x);
+                    obj.N{2} = (1 - x^2);
+                    obj.N{3} = 0.5 * x * (1 + x);
+                    obj.gradN{1} = 0.5 - x;
+                    obj.gradN{2} = -2*x;
+                    obj.gradN{3} = 0.5 + x;
+                otherwise
+                    error('Higher-than-quadratic shape functions unavailable');
             end
         end
         
@@ -104,8 +125,7 @@ classdef Gauss_point < handle
                     obj.gradN{7} = 1/2*[-2*x*y*(y+1), 1+2*y-x^2-2*x^2*y]';
                     obj.gradN{8} = -1/2*[1-y^2-2*x+2*x*y^2, 2*x*y*(x-1)]';
                     obj.gradN{9} = [2*x*(y^2-1), 2*y*(x^2-1)]';
-                    
-                    
+
                 otherwise
                     error('Higher-than-quadratic shape functions unavailable');
             end

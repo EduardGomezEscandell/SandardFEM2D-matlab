@@ -98,12 +98,14 @@ function load_mesh(obj, project_dir)
         end
         
         if data{end} == 'B'
-            is_border = true;
+            is_boundary = true;
         else
-            is_border = false;
+            is_boundary = false;
         end
         
-        obj.new_edge(node_IDs, is_border);
+        obj.nodes_per_edge = size(node_IDs,2);
+        
+        obj.new_edge(node_IDs, is_boundary);
         
         line = fgetl(meshFile);
     end

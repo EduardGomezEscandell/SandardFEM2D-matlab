@@ -22,6 +22,10 @@ classdef SystemOfEquations < handle
             obj.u = NaN * zeros(n,1);
         end
         
+        function r = residual(obj)
+            r = obj.b - obj.K*obj.u;
+        end
+        
         function solve(obj)
            obj.u = obj.K \ obj.b;
            obj.isSolved = true;
@@ -59,36 +63,29 @@ classdef SystemOfEquations < handle
             obj.b(end) = 1;
         end
         
-        function enforce_boundaries(obj, domain)
+        function enforce_dirichlet(obj, domain)
             % Using the lagrangian multipliers method
             
             % Assembling matrix H and vector e
-            i = 1;
             for node_cell = domain.nodes
                 node = node_cell{1};
                 for j = 1:domain.DOF_per_node
                     if(node.BC_type(j) == 'D')
-                        obj.e(i) = node.BC_value(j);
-                        obj.H(i, node.id) = 1;
-                        i = i + 1;
+                        obj.e(node.dirichlet_id) = node.BC_value(j);
+                        obj.H(node.dirichlet_id, node.id) = 1;
                     end
                 end
             end
             
             % Copying into equation system
             obj.K(domain.n_nodes+1:end,1:domain.n_nodes) = obj.H;
-            obj.K(1:domain.n_nodes,domain.n_nodes+1:end) = obj.H';
             obj.b(domain.n_nodes+1:end) = obj.e;
         end
         
-        function obj = fake_solution(obj, domain, solution_fun)
-            for i=1:domain.n_nodes
-                sol = solution_fun(domain.nodes{i}.X, domain);
-                for j=1:domain.DOF_per_node
-                    obj.u((i-1)*domain.DOF_per_node + j) = sol(j);
-                end
-            end
-            obj.isSolved = true;
+        function ax = plot_sparsity(obj)
+            ax = imagesc(obj.K./obj.K);
+            title('Sparsity pattern');
+            colormap jet
         end
         
         plot_result(obj, domain, exag)

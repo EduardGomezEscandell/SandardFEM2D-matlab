@@ -23,6 +23,7 @@ classdef Domain < handle
        
        elem_type        % triangle, quad?
        nodes_per_elem   % number of nodes per element
+       nodes_per_edge   % number of nodes per edge
        
        integrationDegree % Degree of integration. Might be moved elsewhere.
        interpolationDegree % Degree of interpolation. Might be moved elsewhere.
@@ -64,9 +65,9 @@ classdef Domain < handle
             obj.n_nodes = obj.n_nodes + 1;
         end
         
-        function new_edge(obj, node_ids, is_border)
+        function new_edge(obj, node_ids, is_boundary)
             % Creates a new edge and adds it to edges.
-            obj.edges{end+1} = Edge(obj, obj.n_edges+1, node_ids, is_border);
+            obj.edges{end+1} = Edge(obj, obj.n_edges+1, node_ids, is_boundary);
             obj.n_edges = obj.n_edges + 1;
         end
         

@@ -1,6 +1,7 @@
 classdef Node < handle
    properties
       id
+      dirichlet_id
       X
       BC_type
       BC_value

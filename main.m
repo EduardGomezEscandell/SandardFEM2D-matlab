@@ -1,7 +1,7 @@
 close all; clc; clear;
 
 % Data entry
-project_dir = 'data/square_dense';
+project_dir = 'data/square_thin';
 
 % Loading geometry
 domain = Domain();
@@ -14,7 +14,7 @@ calcShapeFunctions(gauss_data, domain);
 % Assembling system
 seq = SystemOfEquations(domain);
 seq.assemble(domain, gauss_data);
-seq.enforce_boundaries(domain);
+seq.enforce_dirichlet(domain);
 
 % Solving
 seq.solve()

@@ -1,15 +1,20 @@
-function gaussData = loadGaussData(dom)
-    if(dom.n_dimensions == 1)
-        gaussData = loadGaussSegment(dom.integrationDegree);
-    elseif(dom.n_dimensions == 2)
-        if(dom.elem_type == 'T')
-            gaussData = loadGaussTriangle(dom);
-%         elseif(dom.elem_type == 'Q')              %% FIX
-%             gaussData = loadGaussSegment(dom);
-        end
-        
+function gauss_data = loadGaussData(dom)
+    switch dom.n_dimensions
+        case 1
+            gauss_data = loadGaussSegment(dom.integrationDegree);
+        case 2
+            switch dom.elem_type
+                case 'T'
+                    gauss_data.tris = loadGaussTriangle(dom);
+                    gauss_data.line = loadGaussSegment(dom.integrationDegree);
+                case 'Q'
+                    gauss_data = loadGaussSegment(dom);
+            end
+        case 3
+            error('3D not yet supported')
+        otherwise
+            error('4D+ not supported')
     end
-    % else --> 3D
 end
 
 function gaussData = loadGaussSegment(integrationDegree)
@@ -45,7 +50,7 @@ function gaussData = loadGaussSegment(integrationDegree)
         data = split(line);
         w = str2double(data(2));
         z = str2double(data(3));
-        gaussData{i} = Gauss_point(w, z);
+        gaussData{i} = Gauss_point(i, w, z);
     end
     
     % Closing file
