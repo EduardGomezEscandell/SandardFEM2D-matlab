@@ -18,10 +18,14 @@ for line in file_in:
 	X = []
 	for i in range(3):
 		X.append(float(data[1+i]))
+
+	# Boundary conditions:
 	if(X[1] == 0):
-		file_ou.write('%6d   %10.5f\n'%(int(data[0]), 0))
-#	elif(X[1]==1 or X[0]==1):
-#		file_ou.write('%6d   %10.5f\n'%(int(data[0]), 0))
+		bc_value = X[0]
+		file_ou.write('%6d   %10.5f\n'%(int(data[0]), bc_value))
+	elif(X[1]==1):
+		bc_value = 1 - X[0]
+		file_ou.write('%6d   %10.5f\n'%(int(data[0]), bc_value))
 
 file_ou.write('End Dirichlet\n')
 

@@ -8,7 +8,7 @@ function gauss_data = loadGaussData(dom)
                     gauss_data.tris = loadGaussTriangle(dom);
                     gauss_data.line = loadGaussSegment(dom.integrationDegree);
                 case 'Q'
-                    gauss_data = loadGaussSegment(dom);
+                    gauss_data = loadGaussQuad(dom);
             end
         case 3
             error('3D not yet supported')
@@ -66,7 +66,6 @@ function gaussData = loadGaussTriangle(domain)
     end
     
     % Finding integration degree
-    target = ['n = ',num2str(domain.integrationDegree+1)];
     found = false;
     line = fgetl(fileGauss);
     while ~feof(fileGauss)
@@ -103,4 +102,17 @@ function gaussData = loadGaussTriangle(domain)
     
     % Closing file
     fclose(fileGauss);
+end
+
+function gauss_data = loadGaussQuad(domain)
+    gauss_data.line = loadGaussSegment(domain.integrationDegree);
+    gauss_data.quad = cell(domain.integrationDegree^2, 1);
+    for i = 1:domain.integrationDegree
+        for j = 1:domain.integrationDegree
+            Z = [gauss_data.line{i}.Z, gauss_data.line{j}.Z];
+            id = (i-1)*domain.integrationDegree+j;
+            w = gauss_data.line{i}.w*gauss_data.line{j}.w;
+            gauss_data.quad{id} = Gauss_point(id, w, Z);
+        end
+    end
 end
