@@ -7,11 +7,14 @@ function calcShapeFunctions(gauss_data, domain)
             shape_functions_segment(gauss_data, domain.interpolationDegree);
         case 2
             switch(domain.elem_type)
-                case 'T'    % 2D triangular elements
+                case 'T'
+                    % 2D triangular elements
                     shape_functions_triangle(gauss_data.tris, domain);
-                    shape_functions_segment(gauss_data.line, domain.nodes_per_edge);
-                case 'Q'    % 2D quadrilateral elements
-                    shape_functions_quad(gauss_data, domain);
+                    shape_functions_segment(gauss_data.line, domain.nodes_per_edge-1);
+                case 'Q'
+                    % 2D quadrilateral elements
+                    shape_functions_quad(gauss_data.quad, domain);
+                    shape_functions_segment(gauss_data.line, domain.nodes_per_edge-1);
                     
             end
         case 3

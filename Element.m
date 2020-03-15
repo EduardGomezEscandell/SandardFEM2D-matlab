@@ -32,7 +32,7 @@ classdef Element < handle
            obj.material = domain.materials{material_id};
        end
        
-       function obj = calc_jacobian(obj)
+       function obj = calc_jacobian_tri(obj)
            if obj.area < 0
                Xa = obj.nodes{1}.X;
                Xb = obj.nodes{2}.X;
