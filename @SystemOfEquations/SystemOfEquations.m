@@ -65,7 +65,8 @@ classdef SystemOfEquations < handle
                         I = domain.n_nodes + node.dirichlet_id;
                         J = node.id;
                         obj.b(I) = node.BC_value(j);
-                        obj.K.append_triplet(I,J,1.0);
+                        obj.K.append_triplet(I,J,1);
+                        obj.K.append_triplet(J,I,1);
                     end
                 end
             end
