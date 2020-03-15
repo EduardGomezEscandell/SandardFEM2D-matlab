@@ -14,7 +14,6 @@ calcShapeFunctions(gauss_data, domain);
 % Assembling system
 seq = SystemOfEquations(domain);
 seq.assemble(domain, gauss_data);
-seq.enforce_dirichlet(domain);
 
 % Solving
 seq.solve()

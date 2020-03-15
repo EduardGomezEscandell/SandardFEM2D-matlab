@@ -4,8 +4,7 @@ classdef SystemOfEquations < handle
        K  % Stiffnes matrix
        b  % Load vector
        
-       H  % Lagrangian multipliers matrix
-       e  % Lagrangian multipliers vector
+       k_is_assembled % Wether assembly has finished or not 
        
        u  % Solution vector
        u_clean  % Solution matrix where each row is a node
@@ -15,18 +14,23 @@ classdef SystemOfEquations < handle
         function obj = SystemOfEquations(domain)
             n = domain.n_nodes * domain.DOF_per_node + domain.n_dirichlet;
             obj.n = n;
-            obj.K = zeros(n);
+            obj.K = Sparse_dok(n);
+            obj.k_is_assembled = false;
             obj.b = zeros(n,1);
-            obj.H = zeros(domain.n_dirichlet, domain.n_nodes);
-            obj.e = zeros(domain.n_dirichlet, 1);
             obj.u = NaN * zeros(n,1);
         end
         
         function r = residual(obj)
+            if ~obj.k_is_assembled
+                error('K must be assembled before operations can be performed');
+            end
             r = obj.b - obj.K*obj.u;
         end
         
         function solve(obj)
+            if ~obj.k_is_assembled
+                error('K must be assembled before operations can be performed');
+            end
            obj.u = obj.K \ obj.b;
            obj.isSolved = true;
         end
@@ -52,34 +56,19 @@ classdef SystemOfEquations < handle
             end
         end
         
-        function assemble_laplacian(obj)
-            for i=2:obj.n
-               obj.K(i,i) = 2;
-               obj.K(i,i-1) = -1;
-               obj.K(i-1,i) = -1;
-            end
-            obj.K(1,1) = 2;
-            obj.K(end,end) = 1;
-            obj.b(end) = 1;
-        end
-        
         function enforce_dirichlet(obj, domain)
-            % Using the lagrangian multipliers method
-            
-            % Assembling matrix H and vector e
+
             for node_cell = domain.nodes
                 node = node_cell{1};
                 for j = 1:domain.DOF_per_node
                     if(node.BC_type(j) == 'D')
-                        obj.e(node.dirichlet_id) = node.BC_value(j);
-                        obj.H(node.dirichlet_id, node.id) = 1;
+                        I = domain.n_nodes + node.dirichlet_id;
+                        J = node.id;
+                        obj.b(I) = node.BC_value(j);
+                        obj.K.append_triplet(I,J,1.0);
                     end
                 end
             end
-            
-            % Copying into equation system
-            obj.K(domain.n_nodes+1:end,1:domain.n_nodes) = obj.H;
-            obj.b(domain.n_nodes+1:end) = obj.e;
         end
         
         function ax = plot_sparsity(obj)

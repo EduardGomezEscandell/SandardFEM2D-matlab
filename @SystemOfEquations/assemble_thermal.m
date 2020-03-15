@@ -1,9 +1,11 @@
 function assemble_thermal(obj, domain, gauss_data)
     
+    obj.K.alloc_space(domain.DOF_per_node * domain.nodes_per_elem * domain.n_elems*1.5);
+    
     % Looping through elements
     for el = 1:domain.n_elems
     	element = domain.elems{el};
-        element.calc_jacobian();
+        element.calc_jacobian_tri();
         
         % Looping through nodes --> i
     	for i = 1:domain.nodes_per_elem
@@ -29,7 +31,7 @@ function assemble_thermal(obj, domain, gauss_data)
                 k = 0;
     			for gp_cell = gauss_data.tris'
                     gp = gp_cell{1}; % Stupid matlab
-                    % Weak form: \int \nabla N_i·k·\nabla N_j d\Omega
+                    % Weak form: \int \nabla N_iï¿½kï¿½\nabla N_j d\Omega
                     dotprod =  (element.invJ * gp.gradN{i})' ...
                              * element.material.k ...
                              * element.invJ * gp.gradN{j};
@@ -37,10 +39,10 @@ function assemble_thermal(obj, domain, gauss_data)
                 end
                 k = k * element.area/2;
                 
-                obj.K(I,J) = obj.K(I,J) + k;
+                obj.K.append_triplet(I,J,k);
                 if i~=j
                     % Exploiting symmetry
-                    obj.K(J,I) = obj.K(J,I) + k;
+                    obj.K.append_triplet(J,I,k);
                 end
             
             end            
@@ -81,8 +83,8 @@ function assemble_thermal(obj, domain, gauss_data)
                                 end
                                 I = node_i.id;
                                 J = node_j.dirichlet_id + domain.n_nodes*domain.DOF_per_node;
-
-                                obj.K(I,J) = k;
+                                
+                                obj.K.append_triplet(I,J,k);
                             end
                         end
                     elseif node_i.BC_type == 'N' && node_i.BC_value ~= 0   % Neumann BC
@@ -96,6 +98,10 @@ function assemble_thermal(obj, domain, gauss_data)
                     end
                 end
             end
+            
+            obj.enforce_dirichlet(domain);
+            obj.K = obj.K.to_sparse();
+            obj.k_is_assembled = true;
 
         case 3
             error('3D not yet supported')
