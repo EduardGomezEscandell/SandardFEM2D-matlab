@@ -18,8 +18,7 @@ function plot_result(obj, domain, exag)
                                 case 1
                                     X(i,3) = obj.u(node_id);
                                 case 2
-                                    X_mod(i,1) = X(i,1) + exag*obj.u((node_id-1)*domain.n_dimensions+1);
-                                    X_mod(i,2) = X(i,2) + exag*obj.u((node_id-1)*domain.n_dimensions+2);
+                                    X_mod(i,:) = X(i,:) + exag*obj.u_clean(node_id);
                             end
                         end
                         

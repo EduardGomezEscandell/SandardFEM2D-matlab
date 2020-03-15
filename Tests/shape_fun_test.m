@@ -2,9 +2,9 @@
 % directory and run it.
 
 % Settings:
-shape_fun = 9;   % Shape function
-deg = 2;         % Interpollation degree
-elem_type = 'Q'; % Element type
+shape_fun = 1;   % Shape function
+deg = 1;         % Interpollation degree
+elem_type = 'T'; % Element type
 gauss_deg = 20;
 
 % Main program
@@ -20,9 +20,9 @@ calcShapeFunctions(gauss_data, domain);
 
 switch elem_type
     case 'T'
-        corners = [-1 -1
-            1 -1
-            -1 1];
+        corners = [0 0
+                   2 5
+                   1 7];
         X = [];
         Z = [];
         for gp_cell = gauss_data.tris'
