@@ -1,4 +1,0 @@
-DoF_per_Node = 1
-integration_degree = 7
-problem_type = Thermal
-source_term = 0
