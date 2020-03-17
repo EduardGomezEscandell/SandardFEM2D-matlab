@@ -33,7 +33,7 @@ function load_boundaries(obj, project_dir)
             if ~strcmp(data{2+i},'-')
                 node.BC_type(i) = 'D';
                 node.BC_value(i) = str2double(data{2+i});
-                node.dirichlet_id = obj.n_dirichlet + 1;
+                node.BC_id = obj.n_dirichlet + obj.n_neumann + 1;
                 obj.n_dirichlet = obj.n_dirichlet + 1;
             end
         end
@@ -66,9 +66,10 @@ function load_boundaries(obj, project_dir)
             if ~strcmp(data{2+i},'-')
                 node.BC_type(i) = 'N';
                 node.BC_value(i) = str2double(data{2+i});
+                node.BC_id = obj.n_dirichlet + obj.n_neumann + 1;
+                obj.n_neumann = obj.n_neumann + 1;
             end
         end
-
         line = fgetl(bcFile);
     end
 end

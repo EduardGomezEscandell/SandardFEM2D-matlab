@@ -15,12 +15,16 @@ classdef Material < handle
             for attribute = attribute_list
                 if strcmp(attribute.Name,'name')
                     obj.name = attribute.Value;
+                    
                 elseif strcmp(attribute.Name,'E')
                     obj.E = interpret_attribute(attribute.Value);
+                    
                 elseif strcmp(attribute.Name,'Poisson')
                     obj.v = interpret_attribute(attribute.Value);
+                    
                 elseif strcmp(attribute.Name,'Density')
                     obj.dens = interpret_attribute(attribute.Value);
+                    
                 elseif strcmp(attribute.Name,'Thermal')
                     obj.k  = interpret_attribute(attribute.Value);
                 else

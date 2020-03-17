@@ -50,61 +50,55 @@ function assemble_thermal(obj, domain, gauss_data)
     end
 
     % Obtaining fluxes
+    % Looping through edges
+    for eg = 1:domain.n_edges
+        edge = domain.edges{eg};
+        if ~edge.is_boundary
+            continue
+        end
 
-    %     switch domain.n_dimensions
-    %         case 1
-    %             error('One dimension not yet supported')
-    %         case 2
-    %             for eg = 1:domain.n_edges
-    %                 edge = domain.edges{eg};
-    %                 if ~edge.is_boundary
-    %                     continue
-    %                 end
-    %
-    %                 if size(edge.material.k,1) > 1
-    %                     % Obtaining normal vector
-    %                     n = edge.nodes{end}.X' - edge.nodes{1}.X';
-    %                     n = [0 1; -1 0]*n; % Rotating 90 deg to the right
-    %                     n = n / norm(n);   % Normalizing
-    %                 else
-    %                     n = 1;
-    %                 end
-    %
-    %                 for i = 1:domain.nodes_per_edge
-    %                     node_i = edge.nodes{i};
-    %                     if node_i.BC_type == 'D' % Dirichlet BC
-    %                         for j = 1:domain.nodes_per_edge
-    %                             node_j = edge.nodes{j};
-    %                             if node_j.BC_type == 'D' % Dirichlet BC
-    %                                 k = 0;
-    %                                 for gp_cell = gauss_data.line'
-    %                                     gp = gp_cell{1}; % Thanks Matlab
-    %                                     k = k + gp.w *  gp.N{i} * gp.N{j} * n' * edge.material.k * n;
-    %                                 end
-    %                                 I = node_i.id;
-    %                                 J = node_j.dirichlet_id + domain.n_nodes*domain.DOF_per_node;
-    %
-    %                                 obj.K.append_triplet(I,J,k);
-    %                             end
-    %                         end
-    %                     elseif node_i.BC_type == 'N' && node_i.BC_value ~= 0   % Neumann BC
-    %                             b = 0;
-    %                             for gp_cell = gauss_data.line'
-    %                                 gp = gp_cell{1};
-    %                                 b = b + gp.w * gp.N{i} * node_i.BC_value;
-    %                             end
-    %                             I = node_i.id;
-    %                             obj.b(I) = obj.b(I) + b;
-    %                     end
-    %                 end
-    %             end
-    %
-    %         case 3
-    %             error('3D not yet supported')
-    %         otherwise
-    %             error('4D+ not supported')
-    %     end
-    obj.enforce_dirichlet(domain);
+        % Obtaining normal vector
+        if size(edge.material.k,1) > 1
+            n = edge.nodes{end}.X' - edge.nodes{1}.X';
+            n = [0 1; -1 0]*n; % Rotating 90 deg to the right
+            n = n / norm(n);   % Normalizing
+        else
+            n = 1;
+        end
+
+        % Assembling
+        for i = 1:domain.nodes_per_edge
+            node_i = edge.nodes{i};
+            if isempty(node_i.BC_id)
+                continue % It is a Neumann = 0, the integral will be zero
+            end
+            
+            for j = i:domain.nodes_per_edge
+                node_j = edge.nodes{j};
+                
+                if isempty(node_j.BC_id)
+                    continue % It is a Neumann = 0, the integral will be zero
+                end
+
+                k = 0;
+                for gp_cell = gauss_data.line'
+                    gp = gp_cell{1}; % Thanks Matlab for not looping through cells :(
+                    k = k + gp.w *  gp.N{i} * gp.N{j} * n' * edge.material.k * n;
+                end
+                I = node_i.id;
+                J = node_j.BC_id + domain.n_nodes*domain.DOF_per_node;
+                obj.K.append_triplet(I,J,k);
+
+                if(node_i.id ~= node_j.id) % Exploiting symmetry
+                    I = node_j.id;
+                    J = node_i.BC_id + domain.n_nodes*domain.DOF_per_node;
+                    obj.K.append_triplet(I,J,k);
+                end
+            end
+
+        end
+    end
+    obj.enforce_BC(domain);
     obj.K = obj.K.to_sparse();
     obj.k_is_assembled = true;
 end

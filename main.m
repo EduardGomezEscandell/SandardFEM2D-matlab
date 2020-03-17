@@ -1,7 +1,7 @@
 close all; clc; clear;
 
 % Data entry
-project_dir = 'data/square_thin';
+project_dir = 'data/square_T3';
 
 % Loading geometry
 domain = Domain();

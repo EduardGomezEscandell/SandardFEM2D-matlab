@@ -11,6 +11,7 @@ classdef Domain < handle
        n_materials      % size of materials
        
        n_dirichlet
+       n_neumann
        source_term
        
        n_dimensions     % number of dimensions
@@ -40,6 +41,7 @@ classdef Domain < handle
             obj.n_elems = 0;
             obj.n_materials = 0;
             obj.n_dirichlet = 0;
+            obj.n_neumann = 0;
         end
         
         %% Methods to read from file

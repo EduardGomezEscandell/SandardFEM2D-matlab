@@ -1,10 +1,10 @@
 classdef Node < handle
    properties
       id
-      dirichlet_id
       X
       BC_type
       BC_value
+      BC_id
    end
    methods
        function obj = Node(id, X, n_DOF)

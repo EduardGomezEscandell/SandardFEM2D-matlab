@@ -12,7 +12,8 @@ classdef SystemOfEquations < handle
     end
     methods
         function obj = SystemOfEquations(domain)
-            n = domain.n_nodes * domain.DOF_per_node + domain.n_dirichlet;
+            n =   domain.n_nodes * domain.DOF_per_node ...
+                + domain.n_dirichlet + domain.n_neumann;
             obj.n = n;
             obj.K = Sparse_dok(n);
             obj.k_is_assembled = false;
@@ -56,17 +57,24 @@ classdef SystemOfEquations < handle
             end
         end
         
-        function enforce_dirichlet(obj, domain)
+        function enforce_BC(obj, domain)
 
             for node_cell = domain.nodes
                 node = node_cell{1};
+                
+                if isempty(node.BC_id)
+                    continue % It is a Neumann = 0
+                end
+                
                 for j = 1:domain.DOF_per_node
+                    I = domain.n_nodes*domain.DOF_per_node + node.BC_id;
+                    J = node.id;
                     if(node.BC_type(j) == 'D')
-                        I = domain.n_nodes + node.dirichlet_id;
-                        J = node.id;
                         obj.b(I) = node.BC_value(j);
                         obj.K.append_triplet(I,J,1);
-                        obj.K.append_triplet(J,I,1);
+                    elseif(node.BC_type(j) == 'N')
+                        obj.b(I) = node.BC_value(j);
+                        obj.K.append_triplet(I,I,1);
                     end
                 end
             end
