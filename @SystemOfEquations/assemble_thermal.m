@@ -1,6 +1,6 @@
 function assemble_thermal(obj, domain, gauss_data)
 
-    obj.K.alloc_space(domain.DOF_per_node * domain.nodes_per_elem * domain.n_elems*1.5);
+    obj.K.alloc_space(domain.DOF_per_node * domain.nodes_per_elem * domain.n_elems*3);
 
     % Looping through elements
     for el = 1:domain.n_elems

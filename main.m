@@ -2,7 +2,7 @@ clc; clear;
 figure();
 
 % Data entry
-project_dir = 'data/square_T3';
+project_dir = 'data/square_T6';
 
 % Loading geometry
 domain = Domain();
