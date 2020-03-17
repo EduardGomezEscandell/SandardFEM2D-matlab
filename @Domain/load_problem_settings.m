@@ -47,7 +47,6 @@ end
 
 
 function output = read_source_term(input)
-    data = split(input,',');
     
     any_link = contains(input,'@');
     
@@ -56,6 +55,14 @@ function output = read_source_term(input)
         addpath(path{end})
         output = @source_term;
     else
-        output = zeros(size(data));
+        lines = split(input,';');
+        output = [];
+        for i = size(lines,1):-1:1
+            line = lines{i};
+            cells = split(line,',');
+            for j = size(cells,1):-1:1
+                output(i,j) = str2double(cells{j});
+            end
+        end
     end
 end
