@@ -94,6 +94,5 @@ classdef Domain < handle
            obj.n_materials = obj.n_materials + 1;
         end
         
-        
     end
 end

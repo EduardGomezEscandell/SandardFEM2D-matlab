@@ -1,4 +1,5 @@
-close all; clc; clear;
+clc; clear;
+figure();
 
 % Data entry
 project_dir = 'data/square_T3';
@@ -20,6 +21,6 @@ seq.solve()
 seq.clean_solution(domain)
 
 % Post-processing
-exageration = 10;
+exageration = 1;
 seq.plot_result(domain, exageration);
 seq.export_to_vtk(domain, project_dir);

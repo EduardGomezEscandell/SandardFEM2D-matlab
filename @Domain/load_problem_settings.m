@@ -19,9 +19,7 @@ function load_problem_settings(obj, project_dir)
         elseif(strcmp(data{1},'problem_type'))
             obj.problem_type = obtain_problem_type(data{3});
         elseif(strcmp(data{1},'source_term'))
-            for i=3:size(data,1)
-                obj.source_term(end+1) = str2double(data{i});
-            end
+            obj.source_term = read_source_term(data{3});
         end
         % More elseifs ?
     end
@@ -44,5 +42,20 @@ function problem_type = obtain_problem_type(text)
     
     if problem_type == 0
         error(['Failed to identify problem type ',text]);
+    end
+end
+
+
+function output = read_source_term(input)
+    data = split(input,',');
+    
+    any_link = contains(input,'@');
+    
+    if any_link
+        path = split(data,'@');
+        addpath(path{end})
+        output = @source_term;
+    else
+        output = zeros(size(data));
     end
 end

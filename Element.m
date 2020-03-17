@@ -45,5 +45,18 @@ classdef Element < handle
            
        end
        
+       function q = get_source_term_triangle(obj, domain, gp)
+           % Method to output source term
+           if isnumeric(domain.source_term)
+               q = domain.source_term;
+               return
+           end
+           
+           % Q is a function handle, must be evaluated
+           corners = [obj.nodes{1}.X', obj.nodes{2}.X', obj.nodes{3}.X'];
+           X = gp.Z * corners';
+           q = domain.source_term(X');
+        end
+       
    end
 end

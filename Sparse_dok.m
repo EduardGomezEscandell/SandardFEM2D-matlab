@@ -42,6 +42,13 @@ classdef Sparse_dok < handle
                 end
             end
         end
+        
+        function combine(obj, K)
+            obj.cols = [obj.cols(1:obj.n_entries), obj.cols(1:K.n_entries)];
+            obj.cols = [obj.rows(1:obj.n_entries), obj.rows(1:K.n_entries)];
+            obj.cols = [obj.vals(1:obj.n_entries), obj.vals(1:K.n_entries)];
+            obj.n_entries = obj.n_entries + K.n_entries;
+        end
                 
         function A = to_sparse(obj)
             % Transforms itself into a Matlab built-in sparse matrix
