@@ -94,5 +94,15 @@ classdef Domain < handle
            obj.n_materials = obj.n_materials + 1;
         end
         
+        function draw_mesh(obj, color)
+            edges_list = obj.edges;
+            parfor eg=1:obj.n_edges
+                edge = edges_list{eg};
+                X = [edge.nodes{1}.X', edge.nodes{end}.X'];
+                plot(X(1,:), X(2,:), 'Color', color);
+                hold on
+            end
+        end
+        
     end
 end

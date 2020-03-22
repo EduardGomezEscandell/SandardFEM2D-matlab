@@ -8,6 +8,9 @@ classdef SystemOfEquations < handle
        
        u  % Solution vector
        u_clean  % Solution matrix where each row is a node
+       
+       grad_u  % Gradient of the solution
+       
        isSolved = false % Solved flag
     end
     methods
@@ -50,6 +53,8 @@ classdef SystemOfEquations < handle
         
         function assemble(obj, domain, gauss_data)
             switch domain.problem_type
+                case -2
+                    obj.assemble_aero(domain, gauss_data)
                 case -1
                     obj.assemble_thermal(domain, gauss_data)
                 case 1
@@ -88,6 +93,7 @@ classdef SystemOfEquations < handle
         
         plot_result(obj, domain, exag)
         export_to_vtk(obj, domain, input_dir)
+        calc_gradients(obj, domain, gauss_data)
         assemble_thermal(obj, domain, gauss_data)
         assemble_stress_2D(obj, domain, gauss_data)
         

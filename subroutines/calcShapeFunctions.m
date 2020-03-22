@@ -37,7 +37,7 @@ function shape_functions_triangle(gauss_data, domain)
     Xelem = [0 0; 1 0; 0 1]; % Isoparametric triangle
     for i = 1:size(gauss_data,1)
         gauss_point = gauss_data{i};
-        X = gauss_point.change_coordinates_triangle(domain, Xelem);
+        X = gauss_point.change_coordinates_triangle(Xelem);
         x = X(1);
         y = X(2);
         n = domain.interpolationDegree;

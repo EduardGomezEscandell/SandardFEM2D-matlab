@@ -1,4 +1,3 @@
 DoF_per_Node = 1
 integration_degree = 5
-problem_type = Thermal
-source_term = @data/square_T3
+source_term = @.

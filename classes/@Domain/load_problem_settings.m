@@ -23,13 +23,31 @@ function load_problem_settings(obj, project_dir)
         end
         % More elseifs ?
     end
+    
+    
+    
+    function output = read_source_term(input)
+        data_split = split(input,',');
+
+        any_link = contains(input,'@');
+
+        if any_link
+            link = split(data_split,'@');
+            path = [project_dir,'/', link{end}];
+            addpath(path)
+            output = @source_term;
+        else
+            output = zeros(size(data_split));
+        end
+    end
 end
 
 function problem_type = obtain_problem_type(text)
     problem_type = 0;
     
     % Add items to the list to add new problem types
-    problem_types = {'Thermal'      ,-1;
+    problem_types = {'Aeropotential',-2;
+                    'Thermal'       ,-1;
                     'Plane_Stress'  , 1;
                     'Plane_Strain'  , 2};
     
@@ -45,17 +63,3 @@ function problem_type = obtain_problem_type(text)
     end
 end
 
-
-function output = read_source_term(input)
-    data = split(input,',');
-    
-    any_link = contains(input,'@');
-    
-    if any_link
-        path = split(data,'@');
-        addpath(path{end})
-        output = @source_term;
-    else
-        output = zeros(size(data));
-    end
-end
