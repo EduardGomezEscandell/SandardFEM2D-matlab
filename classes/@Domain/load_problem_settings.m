@@ -37,7 +37,15 @@ function load_problem_settings(obj, project_dir)
             addpath(path)
             output = @source_term;
         else
-            output = zeros(size(data_split));
+            lines = split(input,';');
+            output = [];
+            for i = size(lines,1):-1:1
+                line = lines{i};
+                cells = split(line,',');
+                for j = size(cells,1):-1:1
+                    output(i,j) = str2double(cells{j});
+                end
+            end
         end
     end
 end
@@ -62,4 +70,3 @@ function problem_type = obtain_problem_type(text)
         error(['Failed to identify problem type ',text]);
     end
 end
-
