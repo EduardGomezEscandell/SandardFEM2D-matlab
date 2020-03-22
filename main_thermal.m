@@ -1,8 +1,10 @@
 clc; clear;
 figure();
+addpath('subroutines')
+addpath('classes')
 
 % Data entry
-project_dir = 'data/square_T6';
+project_dir = 'data/square_T3';
 
 % Loading geometry
 domain = Domain();
