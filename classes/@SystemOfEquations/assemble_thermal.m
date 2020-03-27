@@ -17,7 +17,7 @@ function assemble_thermal(obj, domain, gauss_data)
             for gp_cell = gauss_data.plane'
                 gp = gp_cell{1}; % Stupid matlab
                 % Weak form: \int N_i s d\Omega
-                f = f + gp.w * gp.N{i} * element.get_source_term_triangle(domain, gp);
+                f = f + gp.w * gp.N{i} * element.get_source_term(domain, gp);
             end
             obj.b(I) = f * element.area/2;
 
@@ -83,7 +83,7 @@ function assemble_thermal(obj, domain, gauss_data)
                 k = 0;
                 for gp_cell = gauss_data.line'
                     gp = gp_cell{1}; % Thanks Matlab for not looping through cells :(
-                    k = k + gp.w *  gp.N{i} * gp.N{j} * n' * edge.material.k * n;
+                    k = k + gp.w *  gp.N{i} * gp.N{j};
                 end
                 I = node_i.id;
                 J = node_j.BC_id + domain.n_nodes*domain.DOF_per_node;

@@ -94,6 +94,8 @@ classdef Domain < handle
            obj.n_materials = obj.n_materials + 1;
         end
         
+        %% Method to draw the mesh
+        
         function draw_mesh(obj, color)
             edges_list = obj.edges;
             parfor eg=1:obj.n_edges
