@@ -1,13 +1,5 @@
 function calc_gradients(obj, domain, gauss_data)
     % For now only implemented for 2D
-    switch domain.elem_type
-        case 'T'
-            gauss_data = gauss_data.tris;
-        case 'Q'
-            gauss_data = gauss_data.quad;
-        otherwise
-            error('Unrecognized element type')
-    end
          
     obj.grad_u = cell(domain.DOF_per_node,1);
     for k = 1:domain.DOF_per_node

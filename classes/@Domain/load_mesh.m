@@ -18,7 +18,7 @@ function load_mesh(obj, project_dir)
     if strcmp(data{5},'Triangle')
         obj.elem_type = 'T';
         obj.interpolationDegree = obj.nodes_per_elem / 3;
-    elseif strcmp(data{5},'Quad ?')
+    elseif strcmp(data{5},'Quadrilateral')
         obj.elem_type = 'Q';
         obj.interpolationDegree = obj.nodes_per_elem / 4;
     end

@@ -5,7 +5,7 @@ function gauss_data = loadGaussData(dom)
         case 2
             switch dom.elem_type
                 case 'T'
-                    gauss_data.tris = loadGaussTriangle(dom);
+                    gauss_data.plane = loadGaussTriangle(dom);
                     gauss_data.line = loadGaussSegment(dom.integrationDegree);
                 case 'Q'
                     gauss_data = loadGaussQuad(dom);
@@ -106,13 +106,13 @@ end
 
 function gauss_data = loadGaussQuad(domain)
     gauss_data.line = loadGaussSegment(domain.integrationDegree);
-    gauss_data.quad = cell(domain.integrationDegree^2, 1);
+    gauss_data.plane = cell(domain.integrationDegree^2, 1);
     for i = 1:domain.integrationDegree
         for j = 1:domain.integrationDegree
             Z = [gauss_data.line{i}.Z, gauss_data.line{j}.Z];
             id = (i-1)*domain.integrationDegree+j;
             w = gauss_data.line{i}.w*gauss_data.line{j}.w;
-            gauss_data.quad{id} = Gauss_point(id, w, Z);
+            gauss_data.plane{id} = Gauss_point(id, w, Z);
         end
     end
 end

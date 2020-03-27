@@ -7,8 +7,8 @@ function plot_result(obj, domain, exag)
             ylabel('u');
         case 2
             switch(domain.elem_type)
-                case 'T'
-                    % Triangular elements
+                case 'T' 
+                    %% Tris
                     for el = 1:domain.n_elems
                         element = domain.elems{el};
                         for i=1:3
@@ -33,13 +33,32 @@ function plot_result(obj, domain, exag)
                         end
                         hold on
                     end
-                    colorbar
-                    xlabel('x')
-                    ylabel('y')
-                    zlabel('u')
-                    hold off
-                case 'Q'
-                    % Quad elements
+                    
+                case 'Q'%% Quads
+                    
+                    X = zeros(domain.n_nodes,1);
+                    Y = zeros(domain.n_nodes,1);
+                    
+                    for nd_cell = domain.nodes
+                        node = nd_cell{1};
+                        X(node.id) = node.X(1);
+                        Y(node.id) = node.X(2);
+                    end
+                    
+                    switch(domain.DOF_per_node)
+                       case 1
+                            T =delaunay(X,Y);
+                            trisurf(T,X,Y,obj.u_clean);
+                       case 2
+                            Z0 = zeros(1,domain.n_nodes);
+                            mesh(X+obj.u_clean(1), X+obj.u_clean(2),Z0);
+                    end
+
             end
+            colorbar
+            xlabel('x')
+            ylabel('y')
+            zlabel('u')
+            hold off
     end
 end

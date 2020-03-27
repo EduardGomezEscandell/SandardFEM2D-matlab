@@ -31,7 +31,7 @@ for line in file_in:
 
 if elem_type == 'Triangle':
 	corner_nodes = 3
-elif elem_type == 'Quad':
+elif elem_type == 'Quadrilateral':
 	corner_nodes = 4
 
 file_ou.write('\n\n')

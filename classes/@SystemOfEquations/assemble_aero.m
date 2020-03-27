@@ -14,10 +14,10 @@ function assemble_aero(obj, domain, gauss_data)
             % Load vector:
 
             f = 0;
-            for gp_cell = gauss_data.tris'
+            for gp_cell = gauss_data.plane'
                 gp = gp_cell{1}; % Stupid matlab
                 % Weak form: \int N_i·s d\Omega
-                f = f + gp.w * gp.N{i} * element.get_source_term_triangle(domain, gp);
+                f = f + gp.w * gp.N{i} * element.get_source_term(domain, gp);
             end
             obj.b(I) = f * element.area/2;
 
@@ -29,7 +29,7 @@ function assemble_aero(obj, domain, gauss_data)
 
                 % Gauss quadrature
                 k = 0;
-                for gp_cell = gauss_data.tris'
+                for gp_cell = gauss_data.plane'
                     gp = gp_cell{1}; % Stupid matlab
                     % Weak form: \int \nabla N_i�k�\nabla N_j d\Omega
                     dotprod =  (element.invJ * gp.gradN{i})' ...
