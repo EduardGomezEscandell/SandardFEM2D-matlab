@@ -9,30 +9,26 @@ function calc_gradients(obj, domain)
         case 1
             error('Not yet implemented')
         case 2
-            switch domain.nodes_per_elem
-                case 3
-                    % Triangle 3
+            switch domain.elem_type
+                case 'T'
+                    % Triangle
                     error('Not yet implemented')
-                case 6
-                    % Triangle 6
-                    error('Not yet implemented')
-                case 4
+                    
+                    
+                case 'Q'
+                    % Quad
                     nodes_iso = [-1 -1;
                                   1 -1;
                                   1  1;
                                  -1  1];
-                case 9
-                    % Quad 9
-                    error('Not yet implemented')
+                    for i=1:domain.nodes_per_elem
+                        node = nodes_iso(i,:);
+                        gauss_data{i} = Gauss_point(i, 0, node);
+                        gauss_data{i}.quad_shape_fun(node(1),node(2), domain.interpolationDegree);
+                    end         
             end
         case 3
             error('Not yet implemented')
-    end
-    
-    for i=1:domain.nodes_per_elem
-        node = nodes_iso(i,:);
-        gauss_data{i} = Gauss_point(i, 0, node);
-        gauss_data{i}.quad_shape_fun(node(1),node(2), domain.interpolationDegree);
     end
     
     for elem_cell = domain.elems
