@@ -13,14 +13,29 @@ function calc_gradients(obj, domain)
                 case 'T'
                     % Triangle
                     error('Not yet implemented')
-                    
+                    nodes_iso = [ 1  0;
+                                  0  1;
+                                  0  0;
+                                 0.5 0.5;
+                                  0  0.5;
+                                 0.5 0]; 
+                    for i=1:domain.nodes_per_elem
+                        node = nodes_iso(i,:);
+                        gauss_data{i} = Gauss_point(i, 0, node);
+                        gauss_data{i}.triangle_shape_fun(node(1),node(2), domain.interpolationDegree);
+                    end         
                     
                 case 'Q'
                     % Quad
                     nodes_iso = [-1 -1;
                                   1 -1;
                                   1  1;
-                                 -1  1];
+                                 -1  1;
+                                  0 -1;
+                                  1  0;
+                                  0  1;
+                                 -1  0;
+                                  0  0];
                     for i=1:domain.nodes_per_elem
                         node = nodes_iso(i,:);
                         gauss_data{i} = Gauss_point(i, 0, node);
