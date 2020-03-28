@@ -94,6 +94,7 @@ classdef SystemOfEquations < handle
         plot_result(obj, domain, exag)
         export_to_vtk(obj, domain, input_dir)
         calc_gradients(obj, domain, gauss_data)
+        plot_gradients(obj, domain)
         assemble_thermal(obj, domain, gauss_data)
         assemble_stress_2D(obj, domain, gauss_data)
         

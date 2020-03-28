@@ -29,9 +29,12 @@ for line in file_in:
 		X.append(float(data[1+i]))
 
 	# Boundary conditions:
-	if(X[0] == 0 or X[1] == 0 or X[0]==1 or X[1]==1):
+	if(X[0] == 0):
         #                   Node ID     Value
 		dirichlet.append([int(data[0]),  0.0])
+	if(X[0] == 1):
+        #                   Node ID     Value
+		dirichlet.append([int(data[0]),  1.0])
 
 if len(dirichlet)>0:
     file_ou.write('Dirichlet\n')

@@ -26,6 +26,8 @@ end
 function shape_functions_segment(gauss_data, interpolation_degree)
     for i = 1:size(gauss_data,1)
         gauss_point = gauss_data{i};
+        
+        % Fix for other elem types:
         gauss_point.segment_shape_fun(gauss_point.Z,interpolation_degree);
     end
 end
