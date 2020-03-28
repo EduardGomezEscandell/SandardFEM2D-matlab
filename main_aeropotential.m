@@ -4,7 +4,7 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/square_T6';
+project_dir = 'data/square_quad';
 
 % Loading geometry
 domain = Domain();
@@ -22,15 +22,15 @@ seq.assemble(domain, gauss_data);
 % Solving
 seq.solve()
 seq.clean_solution(domain)
-% seq.calc_gradients(domain);
+seq.calc_gradients(domain);
 
 % Post-processing
-% subplot(121);
-% seq.plot_gradients(domain)
-% hold on
-% domain.draw_mesh([0.9 0.9 0.9]);
+subplot(121);
+seq.plot_gradients(domain)
+hold on
+domain.draw_mesh([0.9 0.9 0.9]);
 % % 
-% subplot(122);
+subplot(122);
 exageration = 1;
 seq.plot_result(domain, exageration);
 % seq.export_to_vtk(domain, project_dir);
