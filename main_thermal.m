@@ -5,7 +5,7 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/square_T6';
+project_dir = 'data/square_quad';
 
 % Loading geometry
 domain = Domain();

@@ -49,6 +49,20 @@ function plot_result(obj, domain, exag)
                        case 1
                             T =delaunay(X,Y);
                             trisurf(T,X,Y,obj.u_clean);
+                            shading interp;
+                            hold on;
+                            
+                            for eg = 1:domain.n_edges
+                                edge = domain.edges{eg};
+                                node1 = edge.nodes{1};
+                                node2 = edge.nodes{end};
+                                X = [node1.X(1), node2.X(1)];
+                                Y = [node1.X(2), node2.X(2)];
+                                Z = [obj.u(node1.id), obj.u(node2.id)];
+                                plot3(X,Y,Z,'Color','k');
+                            end
+                            hold off;
+                            
                        case 2
                             Z0 = zeros(1,domain.n_nodes);
                             mesh(X+obj.u_clean(1), X+obj.u_clean(2),Z0);

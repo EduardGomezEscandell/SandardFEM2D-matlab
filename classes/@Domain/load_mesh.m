@@ -20,7 +20,14 @@ function load_mesh(obj, project_dir)
         obj.interpolationDegree = obj.nodes_per_elem / 3;
     elseif strcmp(data{5},'Quadrilateral')
         obj.elem_type = 'Q';
-        obj.interpolationDegree = obj.nodes_per_elem / 4;
+        switch obj.nodes_per_elem
+            case 4
+                obj.interpolationDegree  = 1;
+            case 9
+                obj.interpolationDegree  = 2;
+            otherwise
+                error('Only 4 and 9 node quad elements accepted');
+        end
     end
 
     %% Nodes

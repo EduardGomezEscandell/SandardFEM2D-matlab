@@ -1,11 +1,22 @@
 function assemble_aero(obj, domain, gauss_data)
+    
+    if domain.n_dimensions ~= 2
+       error('Aero only implemented for 2D domains'); 
+    end
 
     obj.K.alloc_space(domain.DOF_per_node * domain.nodes_per_elem * domain.n_elems*3);
 
     % Looping through elements
     for el = 1:domain.n_elems
         element = domain.elems{el};
-        element.calc_jacobian_tri();
+        
+        if domain.elem_type == 'T'
+            element.calc_jacobian_tri();
+            iso_area = 2;
+        else
+            element.calc_jacobian_quad();
+            iso_area = 4;
+        end
 
         % Looping through nodes --> i
         for i = 1:domain.nodes_per_elem
@@ -19,7 +30,7 @@ function assemble_aero(obj, domain, gauss_data)
                 % Weak form: \int N_i·s d\Omega
                 f = f + gp.w * gp.N{i} * element.get_source_term(domain, gp);
             end
-            obj.b(I) = f * element.area/2;
+            obj.b(I) = f * element.area/iso_area;
 
             % Stiffness matrix:
 
@@ -31,12 +42,23 @@ function assemble_aero(obj, domain, gauss_data)
                 k = 0;
                 for gp_cell = gauss_data.plane'
                     gp = gp_cell{1}; % Stupid matlab
-                    % Weak form: \int \nabla N_i�k�\nabla N_j d\Omega
-                    dotprod =  (element.invJ * gp.gradN{i})' ...
-                        * element.invJ * gp.gradN{j};
+                    % Weak form: \int \nabla N_i k \nabla N_j d\Omega
+                    
+                    if domain.elem_type == 'T'
+                        invJ = element.invJ;
+                    else % Q
+                        j1 = element.jacobian.j1;
+                        j2 = element.jacobian.j2;
+                        j3 = element.jacobian.j3;
+                        jacob = 1/4 * ([j1; j2] + ([0 1;1 0]*gp.Z') * j3);
+                        %                         ^ [xi, eta] --> [eta; xi]
+                        invJ = inv(jacob);
+                    end
+                    
+                    dotprod =  (invJ * gp.gradN{i})'* (invJ * gp.gradN{j});
                     k = k + gp.w * dotprod;
                 end
-                k = k * element.area/2;
+                k = k * element.area/iso_area;
 
                 obj.K.append_triplet(I,J,k);
                 if i~=j
@@ -56,34 +78,34 @@ function assemble_aero(obj, domain, gauss_data)
             continue
         end
 
-        % Obtaining normal vector
-        if size(edge.material.k,1) > 1
-            n = edge.nodes{end}.X' - edge.nodes{1}.X';
-            n = [0 1; -1 0]*n; % Rotating 90 deg to the right
-            n = n / norm(n);   % Normalizing
-        else
-            n = 1;
-        end
+        % Obtaining length
+        v = edge.nodes{end}.X' - edge.nodes{1}.X';
+        edge.length = norm(v);
 
         % Assembling
         for i = 1:domain.nodes_per_edge
             node_i = edge.nodes{i};
+            
             if isempty(node_i.BC_id)
-                continue % It is a Neumann = 0, the integral will be zero
+                % It is a Neumann = 0, the integral will be zero
+                continue
             end
             
             for j = i:domain.nodes_per_edge
                 node_j = edge.nodes{j};
                 
                 if isempty(node_j.BC_id)
-                    continue % It is a Neumann = 0, the integral will be zero
+                    % It is a Neumann = 0, the integral will be zero
+                    continue
                 end
 
                 k = 0;
                 for gp_cell = gauss_data.line'
-                    gp = gp_cell{1}; % Thanks Matlab for not looping through cells :(
+                    gp = gp_cell{1};
                     k = k + gp.w *  gp.N{i} * gp.N{j};
                 end
+                k = k*edge.length/2;
+                
                 I = node_i.id;
                 J = node_j.BC_id + domain.n_nodes*domain.DOF_per_node;
                 obj.K.append_triplet(I,J,k);
