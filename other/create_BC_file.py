@@ -32,9 +32,10 @@ for line in file_in:
 	if(X[0] == 0):
         #                   Node ID     Value
 		dirichlet.append([int(data[0]),  0.0])
-	if(X[0] == 1):
+	elif(X[0] == 2):
         #                   Node ID     Value
 		dirichlet.append([int(data[0]),  1.0])
+
 
 if len(dirichlet)>0:
     file_ou.write('Dirichlet\n')

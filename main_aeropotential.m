@@ -4,12 +4,12 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/square_quad';
+project_dir = 'data/cilinder';
 
 % Loading geometry
 domain = Domain();
-domain.read_from_file(project_dir);
 domain.problem_type = -2; % Aeropotential
+domain.read_from_file(project_dir);
 
 % Loading math data
 gauss_data = loadGaussData(domain);
@@ -26,11 +26,15 @@ seq.calc_gradients(domain);
 
 % Post-processing
 subplot(121);
-seq.plot_gradients(domain)
-hold on
 domain.draw_mesh([0.9 0.9 0.9]);
-% % 
+hold on
+seq.plot_gradients(domain)
+title('Velocity field');
+hold off
+ 
 subplot(122);
 exageration = 1;
 seq.plot_result(domain, exageration);
-% seq.export_to_vtk(domain, project_dir);
+title('Potential field');
+
+seq.export_to_vtk(domain, project_dir);

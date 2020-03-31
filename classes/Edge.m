@@ -4,6 +4,7 @@ classdef Edge < handle
        nodes
        is_boundary
        material   % Only relevant to evaluate fluxes
+       length
    end
    methods
        function obj = Edge(domain, id, node_ids, is_boundary)
