@@ -52,3 +52,5 @@ if len(neumann)>0:
 
 file_in.close()
 file_ou.close()
+
+print('BC file created successfuly')
