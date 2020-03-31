@@ -4,7 +4,7 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/cilinder';
+project_dir = 'data/cylinder_Q9';
 
 % Loading geometry
 domain = Domain();
@@ -15,14 +15,20 @@ domain.read_from_file(project_dir);
 gauss_data = loadGaussData(domain);
 calcShapeFunctions(gauss_data, domain);
 
+disp('Data loaded. Assembling...')
+
 % Assembling system
 seq = SystemOfEquations(domain);
 seq.assemble(domain, gauss_data);
+
+disp('Assembly completed. Solving...')
 
 % Solving
 seq.solve()
 seq.clean_solution(domain)
 seq.calc_gradients(domain);
+
+disp('Solved. Drawing...')
 
 % Post-processing
 subplot(121);
@@ -31,10 +37,15 @@ hold on
 seq.plot_gradients(domain)
 title('Velocity field');
 hold off
+axis equal
  
 subplot(122);
 exageration = 1;
 seq.plot_result(domain, exageration);
 title('Potential field');
 
+disp('Drawn. Exporting...');
+
 seq.export_to_vtk(domain, project_dir);
+
+disp('Done');
