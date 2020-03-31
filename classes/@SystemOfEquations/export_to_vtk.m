@@ -53,13 +53,18 @@ function export_to_vtk(obj, domain, project_dir)
     fprintf(file_out,'\n');
     
     %%  Cell types
-    switch domain.elem_type
-        case 'Q'
-            cell_type = '9'; % quad
-        case 'T'
-            cell_type = '5'; % tri
-        otherwise
-            error('Unrecognized element type');
+    
+    if domain.interpolationDegree > 1
+        cell_type = '7';
+    else
+       switch domain.elem_type
+            case 'Q'
+                cell_type = '9'; % quad
+            case 'T'
+                cell_type = '5'; % tri
+            otherwise
+                error('Unrecognized element type');
+        end 
     end
     
     fprintf(file_out,sprintf(' CELL_TYPES     %d\n',domain.n_elems));
