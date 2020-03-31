@@ -34,13 +34,12 @@ classdef Element < handle
               
        function obj = calc_jacobian_tri(obj)
            if obj.area < 0
-               Xa = obj.nodes{1}.X;
-               Xb = obj.nodes{2}.X;
-               Xc = obj.nodes{3}.X;
-               obj.jacobian = [Xb(1) - Xa(1),   Xc(1) - Xa(1);
-                               Xb(2) - Xa(2),   Xc(2) - Xa(2)];
-               obj.invJ = obj.jacobian^-1;
-               obj.area = det(obj.jacobian);
+               v1 = obj.nodes{2}.X - obj.nodes{1}.X;
+               v2 = obj.nodes{3}.X - obj.nodes{1}.X;
+               
+               obj.jacobian = [v1', v2']';
+               obj.invJ = inv(obj.jacobian);
+               obj.area = 0.5*det(obj.jacobian);
            end
        end
        
