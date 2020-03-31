@@ -10,17 +10,7 @@ classdef Gauss_point < handle
         function obj = Gauss_point(id, w, Z)
             obj.id = id;
             obj.w = w;
-            obj.Z = Z;
-        end
-        
-        function X = change_coordinates_triangle(obj, Xelement)
-            % Returns the converted coordinates from isoparametric space to 
-            % x-y space
-            % Xelement must be such that:
-            % - rows are the vertex nodes
-            % - columns the coordinate (x, y, z)
-            
-            X = obj.Z * Xelement;
+            obj.Z = reshape(Z,[1 length(Z)]);
         end
         
         function segment_shape_fun(obj,x,n)
@@ -44,13 +34,19 @@ classdef Gauss_point < handle
             end
         end
         
-        function triangle_shape_fun(obj,x,y,n)
+        function triangle_shape_fun(obj,n)
+            corners = [0 0; 1 0; 0 1];
+            X = obj.Z * corners;
+            x = X(1);
+            y = X(2);
+            
             switch n % Order of interpolation
                 case 1
                     % Linear
                     obj.N{1} = 1 - x - y;
                     obj.N{2} = x;
                     obj.N{3} = y;
+                    
                     obj.gradN{1} = [-1, -1]';
                     obj.gradN{2} = [ 1,  0]';
                     obj.gradN{3} = [ 0,  1]';
@@ -74,7 +70,9 @@ classdef Gauss_point < handle
             end
         end
         
-        function quad_shape_fun(obj,x,y,n)      % quadrilateral element shape functions
+        function quad_shape_fun(obj,n)      % quadrilateral element shape functions
+            x = obj.Z(1);
+            y = obj.Z(1);
             switch n % Order of interpolation
                 case 1
                     % Linear
