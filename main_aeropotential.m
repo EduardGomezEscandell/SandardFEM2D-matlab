@@ -37,7 +37,6 @@ hold on
 seq.plot_gradients(domain)
 title('Velocity field');
 hold off
-axis equal
  
 subplot(122);
 exageration = 1;

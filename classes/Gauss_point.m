@@ -72,7 +72,7 @@ classdef Gauss_point < handle
         
         function quad_shape_fun(obj,n)      % quadrilateral element shape functions
             x = obj.Z(1);
-            y = obj.Z(1);
+            y = obj.Z(2);
             switch n % Order of interpolation
                 case 1
                     % Linear

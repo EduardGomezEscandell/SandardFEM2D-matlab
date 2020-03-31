@@ -53,7 +53,7 @@ function calc_gradients(obj, domain)
                 j1 = elem.jacobian.j1;
                 j2 = elem.jacobian.j2;
                 j3 = elem.jacobian.j3;
-                jacob = ([j1; j2] + ([0 1;1 0]*gauss_data{i}.Z') * j3)'*0.25;
+                jacob = ([j1; j2] + ([0 1;1 0]*gauss_data{i}.Z') * j3)*0.25;
                 %                   ^ [xi, eta] --> [eta; xi]
                 invJ = inv(jacob);
             else % T

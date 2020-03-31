@@ -55,7 +55,7 @@ function export_to_vtk(obj, domain, project_dir)
     %%  Cell types
     
     if domain.interpolationDegree > 1
-        cell_type = '7';
+        error('Higher order elements not yet implemented');
     else
        switch domain.elem_type
             case 'Q'
