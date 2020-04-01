@@ -97,6 +97,9 @@ classdef SystemOfEquations < handle
         calc_gradients(obj, domain, gauss_data)
         plot_gradients(obj, domain)
         
+        assemble_aero(obj, domain, gauss_data)
+        circulation = aero_calc_circulation(obj, domain, gauss_data, CENTER, RADIUS)
+        
         assemble_thermal(obj, domain, gauss_data)
         assemble_stress_2D(obj, domain, gauss_data)
         
