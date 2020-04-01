@@ -16,7 +16,13 @@ classdef Domain < handle
        
        n_dimensions     % number of dimensions
        DOF_per_node     % number of DOF per node
+       
+       project_dir      % Directory of the project
+       cacheFile        % File handle where cached K is stored
+       is_cached        % Flag that marks wether cached file is valid
+       
        problem_type     % type of problem
+                            % -2 Aero potential
                             % -1 Thermal
                             % +1 Plane Stress
                             % +2 Plane Strain
@@ -46,11 +52,68 @@ classdef Domain < handle
         
         %% Methods to read from file
         function read_from_file(obj, project_dir)
+            obj.project_dir = project_dir;
             % Reads from a file named fileName to load the geomtery
             obj.load_problem_settings(project_dir);
             obj.load_materials(project_dir);
             obj.load_mesh(project_dir);
             obj.load_boundaries(project_dir);
+            obj.check_cache();
+            
+        end
+        
+        function check_cache(obj)
+            % Compares checksum of materials and mesh files with the
+            % previous excution of the program. If they are the same, there
+            % is no need to assemble most of the sttiffness matrix again.
+            
+            obj.is_cached = false;
+            
+            try
+                cacheFileName = [obj.project_dir,'/.cache'];
+                meshFileName = [obj.project_dir,'/mesh.fmsh'];
+                materialsFileName = [obj.project_dir,'/materials.xml'];
+                
+
+                obj.cacheFile = fopen(cacheFileName,'r');
+                
+                mesh_cached_CS = fgetl(obj.cacheFile );
+                mats_cached_CS = fgetl(obj.cacheFile );
+                cached_problem = str2double(fgetl(obj.cacheFile ));
+                cached_gauss = str2double(fgetl(obj.cacheFile ));
+                
+                mesh_check_sum = Simulink.getFileChecksum(meshFileName);
+                mats_check_sum = Simulink.getFileChecksum(materialsFileName);
+                
+                if cached_problem == obj.problem_type        ...
+                   && cached_gauss == obj.integrationDegree  ...
+                   && strcmp(mesh_cached_CS, mesh_check_sum) ...
+                   && strcmp(mats_cached_CS,mats_check_sum)
+                       % Stiffness matrix will be the same
+                       obj.is_cached = true;
+                else
+                    fclose(obj.cacheFile);
+                end
+            catch
+                
+            end
+        end
+        
+        function load_cache(obj, seq)
+            try
+                line = fgetl(obj.cacheFile);
+                while ~strcmp(line, 'EOF')
+                    data = split(line);
+                    row = str2double(data{2});
+                    col = str2double(data{3});
+                    val = str2double(data{4});
+                    seq.K.append_triplet(row, col, val);                    
+                    line = fgetl(obj.cacheFile);
+                end
+            catch
+                error('There was an error reading the cached data, please delete the .cache file and run again');
+            end
+            fclose(obj.cacheFile);
         end
         
         %Functions defined elsewhere. All used by read_from_file

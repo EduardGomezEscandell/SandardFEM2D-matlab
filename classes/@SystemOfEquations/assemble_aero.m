@@ -5,11 +5,10 @@ function assemble_aero(obj, domain, gauss_data)
     end
 
     obj.K.alloc_space(domain.DOF_per_node * domain.nodes_per_elem * domain.n_elems*3);
-
-    % Looping through elements
+    
+    %% Load vector
     for el = 1:domain.n_elems
         element = domain.elems{el};
-        
         if domain.elem_type == 'T'
             element.calc_jacobian_tri();
             iso_area = 2;
@@ -17,8 +16,7 @@ function assemble_aero(obj, domain, gauss_data)
             element.calc_jacobian_quad();
             iso_area = 4;
         end
-
-        % Looping through nodes --> i
+        
         for i = 1:domain.nodes_per_elem
             I = element.nodes{i}.id; % global coordinate
 
@@ -31,46 +29,68 @@ function assemble_aero(obj, domain, gauss_data)
                 f = f + gp.w * gp.N{i} * element.get_source_term(domain, gp);
             end
             obj.b(I) = f * element.area/iso_area;
-
-            % Stiffness matrix:
-
-            % Looping through nodes --> j
-            for j = i:domain.nodes_per_elem
-                J = element.nodes{j}.id; % global coordinate
-
-                % Gauss quadrature
-                k = 0;
-                for gp_cell = gauss_data.plane'
-                    gp = gp_cell{1}; % Stupid matlab
-                    % Weak form: \int \nabla N_i k \nabla N_j d\Omega
-                    
-                    if domain.elem_type == 'T'
-                        invJ = element.invJ;
-                    else % Q
-                        j1 = element.jacobian.j1;
-                        j2 = element.jacobian.j2;
-                        j3 = element.jacobian.j3;
-                        jacob = 1/4 * ([j1; j2] + ([0 1;1 0]*gp.Z') * j3);
-                        %                         ^ [xi, eta] --> [eta; xi]
-                        invJ = inv(jacob);
-                    end
-                    
-                    dotprod =  (invJ * gp.gradN{i})'* (invJ * gp.gradN{j});
-                    k = k + gp.w * dotprod;
-                end
-                k = k * element.area/iso_area;
-
-                obj.K.append_triplet(I,J,k);
-                if i~=j
-                    % Exploiting symmetry
-                    obj.K.append_triplet(J,I,k);
-                end
-
-            end
         end
     end
+    
+    %% Stiffness Matrix
+    if ~domain.is_cached
+        for el = 1:domain.n_elems
+            element = domain.elems{el};
 
-    % Obtaining fluxes
+            if domain.elem_type == 'T'
+                element.calc_jacobian_tri();
+                iso_area = 2;
+            else
+                element.calc_jacobian_quad();
+                iso_area = 4;
+            end
+
+            % Looping through nodes --> i
+            for i = 1:domain.nodes_per_elem
+                I = element.nodes{i}.id; % global coordinate            
+
+                % Looping through nodes --> j
+                for j = i:domain.nodes_per_elem
+                    J = element.nodes{j}.id; % global coordinate
+
+                    % Gauss quadrature
+                    k = 0;
+                    for gp_cell = gauss_data.plane'
+                        gp = gp_cell{1}; % Stupid matlab
+                        % Weak form: \int \nabla N_i k \nabla N_j d\Omega
+
+                        if domain.elem_type == 'T'
+                            invJ = element.invJ;
+                        else % Q
+                            j1 = element.jacobian.j1;
+                            j2 = element.jacobian.j2;
+                            j3 = element.jacobian.j3;
+                            jacob = 1/4 * ([j1; j2] + ([0 1;1 0]*gp.Z') * j3);
+                            %                         ^ [xi, eta] --> [eta; xi]
+                            invJ = inv(jacob);
+                        end
+
+                        dotprod =  (invJ * gp.gradN{i})'* (invJ * gp.gradN{j});
+                        k = k + gp.w * dotprod;
+                    end
+                    k = k * element.area/iso_area;
+
+                    obj.K.append_triplet(I,J,k);
+                    if i~=j
+                        % Exploiting symmetry
+                        obj.K.append_triplet(J,I,k);
+                    end
+
+                end
+            end
+        end
+        
+        domain.store_cache(obj)
+    else
+        domain.load_cache(obj);
+    end
+
+    %%  Obtaining fluxes
     % Looping through edges
     for eg = 1:domain.n_edges
         edge = domain.edges{eg};
