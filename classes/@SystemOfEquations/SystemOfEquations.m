@@ -4,7 +4,7 @@ classdef SystemOfEquations < handle
        K  % Stiffnes matrix
        b  % Load vector
        
-       k_is_assembled % Wether assembly has finished or not 
+       k_is_assembled % Whether assembly has finished or not 
        
        u  % Solution vector
        u_clean  % Solution matrix where each row is a node
