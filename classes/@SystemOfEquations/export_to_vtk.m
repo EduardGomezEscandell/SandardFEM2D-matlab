@@ -54,18 +54,24 @@ function export_to_vtk(obj, domain, project_dir)
     
     %%  Cell types
     
-    if domain.interpolationDegree > 1
-        error('Higher order elements not yet implemented');
-    else
-       switch domain.elem_type
-            case 'Q'
-                cell_type = '9'; % quad
-            case 'T'
-                cell_type = '5'; % tri
-            otherwise
-                error('Unrecognized element type');
-        end 
-    end
+
+   switch domain.elem_type
+        case 'Q'
+            if domain.interpolationDegree == 1
+                cell_type = '9';
+            else
+                cell_type = '28';
+            end
+        case 'T'
+            if domain.interpolationDegree == 1
+                cell_type = '5';
+            else
+                cell_type = '22';
+            end
+        otherwise
+            error('Unrecognized element type');
+    end 
+
     
     fprintf(file_out,sprintf(' CELL_TYPES     %d\n',domain.n_elems));
     text_to_repeat = ['    ',cell_type];
