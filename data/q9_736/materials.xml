@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materials>
+	<material name="Steel" E="200E+9" Poisson="0.28" Density="8000" Thermal="79.5"/>
+    <material name="Anisotropic" Thermal="100,0;0,5"/>
+	<material name="Aluminum" E="69E+9" Poisson="0.35" Density="2700" Thermal="205"/>
+</materials>
