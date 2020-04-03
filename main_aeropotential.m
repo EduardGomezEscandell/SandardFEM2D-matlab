@@ -4,7 +4,7 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/cylinder_Q9';
+project_dir = 'data/constriction_Q9';
 
 % Loading geometry
 domain = Domain();
