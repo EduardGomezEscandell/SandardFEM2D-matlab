@@ -88,6 +88,25 @@ classdef Element < handle
                    X = obj.transform_coordinates_quad(gp.Z);
                    q = domain.source_term(X');
            end
+       end
+        
+       function q = get_k_term(obj, domain, gp)
+           % Method to output source term
+           if isnumeric(obj.material.k_aero)
+               q = domain.source_term;
+               return
+           end
+           
+           % Q is a function handle, must be evaluated
+           switch domain.elem_type
+               case 'T'
+                   corners = [obj.nodes{1}.X', obj.nodes{2}.X', obj.nodes{3}.X'];
+                   X = gp.Z * corners';
+                   q = obj.material.k_aero(X');
+               case 'Q'
+                   X = obj.transform_coordinates_quad(gp.Z);
+                   q = obj.material.k_aero(X');
+           end
         end
        
    end

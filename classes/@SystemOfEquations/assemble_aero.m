@@ -69,8 +69,8 @@ function assemble_aero(obj, domain, gauss_data)
                             %                         ^ [xi, eta] --> [eta; xi]
                             invJ = inv(jacob);
                         end
-
-                        dotprod =  (invJ * gp.gradN{i})'* (invJ * gp.gradN{j});
+                        k_aero = element.get_k_term(domain, gp);
+                        dotprod =  (invJ * gp.gradN{i})'* k_aero * (invJ * gp.gradN{j});
                         k = k + gp.w * dotprod;
                     end
                     k = k * element.area/iso_area;
@@ -87,7 +87,7 @@ function assemble_aero(obj, domain, gauss_data)
         
         domain.store_cache(obj)
     else
-        domain.load_cache(obj);
+        adomain.load_cache(obj);
     end
 
     %%  Obtaining fluxes
@@ -122,7 +122,8 @@ function assemble_aero(obj, domain, gauss_data)
                 k = 0;
                 for gp_cell = gauss_data.line'
                     gp = gp_cell{1};
-                    k = k + gp.w *  gp.N{i} * gp.N{j};
+                    k_aero = element.get_k_term(domain, gp);
+                    k = k + gp.w *  gp.N{i} * k_aero * gp.N{j};
                 end
                 k = k*edge.length/2;
                 

@@ -23,6 +23,7 @@ seq.assemble(domain, gauss_data);
 % Solving
 seq.solve()
 seq.clean_solution(domain)
+seq.calc_gradients(domain);
 
 % Post-processing
 exageration = 1;

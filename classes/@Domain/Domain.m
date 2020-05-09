@@ -153,7 +153,7 @@ classdef Domain < handle
         
         function obj = new_material(obj, attribute_list)
            % Creates a new material and adds it to materials
-           obj.materials{end+1} = Material(obj.n_materials+1, attribute_list);
+           obj.materials{end+1} = Material(obj.n_materials+1, attribute_list, obj.project_dir);
            obj.n_materials = obj.n_materials + 1;
         end
         

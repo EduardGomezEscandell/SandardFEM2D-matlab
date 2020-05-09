@@ -4,7 +4,7 @@ addpath('subroutines/imported')
 addpath('classes')
 
 % Data entry
-project_dir = 'data/constriction_Q9';
+project_dir = 'data/test';
 
 % Loading geometry
 domain = Domain();
@@ -18,7 +18,7 @@ calcShapeFunctions(gauss_data, domain);
 disp('Data loaded. Assembling...')
 
 % Assembling system
-seq = SystemOfEquations(domain);
+seq = SystemOfEquations(domain);Ai o
 seq.assemble(domain, gauss_data);
 
 disp('Assembly completed. Solving...')

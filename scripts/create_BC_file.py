@@ -31,7 +31,7 @@ for line in file_in:
 	# Boundary conditions:
 	if(X[0] == 0):
         #                   Node ID     Value
-		dirichlet.append([int(data[0]), 0.0])
+		dirichlet.append([int(data[0]),  0.0])
 	elif(X[0] == 2):
         #                   Node ID     Value
 		dirichlet.append([int(data[0]),  1.0])
